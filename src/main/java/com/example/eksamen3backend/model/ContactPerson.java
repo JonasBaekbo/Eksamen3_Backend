@@ -22,7 +22,7 @@ public class ContactPerson {
     private int phonenumber;
 
     @ManyToOne
-    @JoinColumn(name = "corporation_id" , nullable = false)
+    @JoinColumn(name = "corporation_id")
     private Corporation corporation;
 
 

@@ -45,13 +45,10 @@ public class CorporationController {
 
                ContactPerson contactPerson = contactPerson_.get();
 
-               Set<ContactPerson> contactPersonSet = new HashSet<>();
 
-               contactPersonSet.add(contactPerson);
+               contactPerson.setCorporation(corporation);
 
-               corporation.setContactPerson(contactPersonSet);
-
-               corporationService.save(corporation);
+               contactPersonService.save(contactPerson);
 
                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
            }
