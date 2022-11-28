@@ -12,17 +12,17 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Table(name = "corporation")
 public class Corporation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "Corporation_name")
     private String name;
 
 
-    @OneToMany
-    @JsonBackReference
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "corporation")
     private Set<ContactPerson> contactPerson = new HashSet<>();
 
     //@ManyToOne(mappedBy = "corporation")
