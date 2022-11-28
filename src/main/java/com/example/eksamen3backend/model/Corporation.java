@@ -1,5 +1,7 @@
 package com.example.eksamen3backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,11 +19,17 @@ public class Corporation {
 
     private String name;
 
-    @OneToMany (mappedBy = "corporation")
+
+    @OneToMany
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Set<ContactPerson> contactPerson = new HashSet<>();
 
-    @OneToMany(mappedBy = "corporation")
-    private Set<Conversation> conversations = new HashSet<>();
+    //@ManyToOne(mappedBy = "corporation")
+    //private Set<ContactPerson> contactPerson = new HashSet<>();
+
+    /*@OneToMany(mappedBy = "corporation")
+    private Set<Conversation> conversations = new HashSet<>();*/
 
 
 }

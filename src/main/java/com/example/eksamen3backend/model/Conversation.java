@@ -17,9 +17,9 @@ public class Conversation {
 
     private String name;
 
-    @ManyToOne
+    /*@ManyToOne
     private ContactPerson contactPerson;
 
     @ManyToOne
-    private Corporation corporation;
+    private Corporation corporation;*/
 }
