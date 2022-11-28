@@ -6,6 +6,7 @@ import com.example.eksamen3backend.repository.ContactPersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,5 +45,10 @@ public class ContactPersonService implements IContactPerson {
     @Override
     public Optional<ContactPerson> findbyId(Long id) {
         return contactPersonRepository.findById(id);
+    }
+
+    @Override
+    public List<ContactPerson> findByname(String name) {
+        return contactPersonRepository.findByName(name);
     }
 }
