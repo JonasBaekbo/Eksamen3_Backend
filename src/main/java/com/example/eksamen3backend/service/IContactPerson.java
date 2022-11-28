@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IContactPerson extends CrudService<ContactPerson, Long> {
 
-    List<ContactPerson> findByname(String name);
+    List<ContactPerson> findByName(String name);
 }

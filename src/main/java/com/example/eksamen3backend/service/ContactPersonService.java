@@ -48,7 +48,7 @@ public class ContactPersonService implements IContactPerson {
     }
 
     @Override
-    public List<ContactPerson> findByname(String name) {
+    public List<ContactPerson> findByName(String name) {
         return contactPersonRepository.findByName(name);
     }
 }
