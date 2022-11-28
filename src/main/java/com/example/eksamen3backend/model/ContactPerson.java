@@ -17,4 +17,9 @@ public class ContactPerson {
     private long id;
 
     private String name;
+
+
+    public ContactPerson(){
+
+    }
 }
