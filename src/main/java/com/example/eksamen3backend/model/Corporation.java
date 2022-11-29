@@ -23,6 +23,18 @@ public class Corporation {
     @Column(name = "Corporation_name")
     private String name;
 
+    @Column(name = "corporation_address")
+    private String address;
+
+    @Column(name = "corporation_logo")
+    private String logo;
+
+    @Column(name ="corporation_city")
+    private String city;
+
+    @Column(name = "corporation_country")
+    private String country;
+
 
     @OneToMany(mappedBy = "corporation")
     @JsonBackReference("contactPerson")
