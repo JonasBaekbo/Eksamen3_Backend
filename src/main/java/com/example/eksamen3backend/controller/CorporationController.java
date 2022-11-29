@@ -44,11 +44,21 @@ public class CorporationController {
 
         List<Corporation> corpList = corporationService.findByName(updateEntity.getCorpName());
         Corporation corporationToUpdate = corpList.get(0);
-        corporationToUpdate.setName(updateEntity.getCorpNameToUpdate());
-        corporationToUpdate.setCity(updateEntity.getCorpCityToUpdate());
-        corporationToUpdate.setAddress(updateEntity.getCorpAddressToUpdate());
-        corporationToUpdate.setLogo(updateEntity.getCorpLogoToUpdate());
-        corporationToUpdate.setCountry(updateEntity.getCorpCountryToUpdate());
+        if(updateEntity.getCorpNameToUpdate() != null){
+            corporationToUpdate.setName(updateEntity.getCorpNameToUpdate());
+        }
+        if(updateEntity.getCorpCityToUpdate() != null){
+            corporationToUpdate.setCity(updateEntity.getCorpCityToUpdate());
+        }
+        if(updateEntity.getCorpAddressToUpdate() != null){
+            corporationToUpdate.setAddress(updateEntity.getCorpAddressToUpdate());
+        }
+        if(updateEntity.getCorpLogoToUpdate() != null){
+            corporationToUpdate.setLogo(updateEntity.getCorpLogoToUpdate());
+        }
+        if(updateEntity.getCorpCountryToUpdate() != null){
+            corporationToUpdate.setCountry(updateEntity.getCorpCountryToUpdate());
+        }
         corporationService.save(corporationToUpdate);
         Map<String,String > map = new HashMap<>();
         map.put("message","Contactperson updatet, if found " + updateEntity.getCorpName());

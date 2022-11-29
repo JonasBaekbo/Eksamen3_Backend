@@ -83,8 +83,14 @@ public class ContactPersonController {
 
         List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
         ContactPerson contactPersonToUpdate = contactpersonList.get(0);
-        contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
-        contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
+        if(updateEntity.getContactPersonPhonenumberToUpdate() != 0){
+            contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
+        }
+        if(updateEntity.getContactPersonNameToUpdate() != null){
+            contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
+        }
+
+
         contactPersonService.save(contactPersonToUpdate);
         Map<String,String > map = new HashMap<>();
         map.put("message","Contactperson updatet, if found " + updateEntity.getContactPersonName());
