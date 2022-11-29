@@ -89,6 +89,12 @@ public class ContactPersonController {
         if(updateEntity.getContactPersonNameToUpdate() != null){
             contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
         }
+        if(updateEntity.getContactPersonEmailToUpdate() != null){
+            contactPersonToUpdate.setEmail(updateEntity.getContactPersonEmailToUpdate());
+        }
+        if(updateEntity.getContactPersonpositionToUpdate() != null){
+            contactPersonToUpdate.setPosition(updateEntity.getContactPersonpositionToUpdate());
+        }
 
 
         contactPersonService.save(contactPersonToUpdate);

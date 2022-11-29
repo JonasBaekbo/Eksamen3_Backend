@@ -13,6 +13,11 @@ public class UpdateEntity {
     private String contactPersonNameToUpdate;
     private int contactPersonPhonenumber;
     private int contactPersonPhonenumberToUpdate;
+    private String contactPersonposition;
+    private String contactPersonpositionToUpdate;
+    private String contactPersonEmail;
+    private String contactPersonEmailToUpdate;
+
     private String corpName;
     private String corpNameToUpdate;
     private String corpAddress;

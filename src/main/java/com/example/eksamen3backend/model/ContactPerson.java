@@ -22,6 +22,10 @@ public class ContactPerson {
     private String name;
     @Column(name = "phone_number")
     private int phonenumber;
+    @Column(name = "contactperson_email")
+    private String email;
+    @Column(name = "contactperson_position")
+    private String position;
 
     @ManyToOne
     @JoinColumn(name = "corporation_id")
