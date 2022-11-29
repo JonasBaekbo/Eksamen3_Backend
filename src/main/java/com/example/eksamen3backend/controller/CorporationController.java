@@ -34,30 +34,11 @@ public class CorporationController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @PostMapping("/addContactpersontoCorp")
-    public ResponseEntity<String> addContactpersontoCorp(@RequestParam Long contactID, @RequestParam Long corpID) {
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (contactPerson_.isPresent()) {
-            if (corporation_.isPresent()) {
-                Corporation corporation = corporation_.get();
-
-                ContactPerson contactPerson = contactPerson_.get();
-
-                contactPerson.setCorporation(corporation);
-
-                contactPersonService.save(contactPerson);
-
-                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
-    }
 
     @GetMapping("/showCorporations")
     public Set<Corporation> showAll() {
         return corporationService.findall();
+
 
     }
 }

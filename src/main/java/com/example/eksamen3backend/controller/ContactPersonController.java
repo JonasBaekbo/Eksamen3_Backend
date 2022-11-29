@@ -3,16 +3,15 @@ package com.example.eksamen3backend.controller;
 
 import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.ContactPersonHistory;
+import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.service.ContactPersonHistoryService;
 import com.example.eksamen3backend.service.ContactPersonService;
+import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class ContactPersonController {
@@ -20,16 +19,21 @@ public class ContactPersonController {
     private ContactPersonService contactPersonService;
     private ContactPersonHistoryService contactPersonHistoryService;
 
-    public ContactPersonController(ContactPersonService contactPersonService, ContactPersonHistoryService contactPersonHistoryService) {
+    private CorporationService corporationService;
+
+    public ContactPersonController(ContactPersonService contactPersonService, ContactPersonHistoryService contactPersonHistoryService, CorporationService corporationService) {
         this.contactPersonHistoryService = contactPersonHistoryService;
         this.contactPersonService = contactPersonService;
+        this.corporationService = corporationService;
+
     }
 
     @PostMapping("/createContactperson")
-    public ResponseEntity<String> createUser(@RequestBody ContactPerson contactPerson) {
+    public ResponseEntity<String> createUser(@RequestBody ContactPerson contactPerson, @RequestParam Long corpID) {
         String msg = "";
         if (contactPersonService.save(contactPerson) != null) {
             msg = "Kontaktperson oprettet: " + contactPerson.getName();
+            addCorpToContactpersonto(contactPerson.getId(), corpID);
         } else {
             msg = "Fejl i oprettelsen af " + contactPerson.getName();
         }
@@ -52,4 +56,26 @@ public class ContactPersonController {
         map.put("message","user deleted, if found " + contactperson.getName());
         return ResponseEntity.ok(map);
     }
+
+    @PostMapping("/addCorpToContactpersonto")
+    public ResponseEntity<String> addCorpToContactpersonto(@RequestParam Long contactID, @RequestParam Long corpID){
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+        if (contactPerson_.isPresent()){
+            if (corporation_.isPresent()){
+                Corporation corporation = corporation_.get();
+
+                ContactPerson contactPerson = contactPerson_.get();
+
+                contactPerson.setCorporation(corporation);
+
+                contactPersonService.save(contactPerson);
+
+                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
+    }
+
 }
