@@ -9,13 +9,9 @@ import com.example.eksamen3backend.service.ConversationService;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class ConversationController {
@@ -25,7 +21,7 @@ public class ConversationController {
     private CorporationService corporationService;
     private ContactPersonService contactPersonService;
 
-    public ConversationController(ConversationService conversationService, ConversationHistoryService conversationHistoryService, CorporationService corporationService, ContactPersonService contactPersonService){
+    public ConversationController(ConversationService conversationService, ConversationHistoryService conversationHistoryService, CorporationService corporationService, ContactPersonService contactPersonService) {
         this.conversationHistoryService = conversationHistoryService;
         this.conversationService = conversationService;
         this.corporationService = corporationService;
@@ -33,10 +29,11 @@ public class ConversationController {
     }
 
     @PostMapping("/createConversation")
-    public ResponseEntity<String> createConversation(@RequestBody Conversation conversation) {
+    public ResponseEntity<String> createConversation(@RequestBody Conversation conversation, @RequestParam Long contactID, @RequestParam Long corpID) {
         String msg = "";
         if (conversationService.save(conversation) != null) {
             msg = "Samtale oprettet: " + conversation.getSubject();
+            addConversation(conversation.getId(), corpID, contactID);
         } else {
             msg = "Fejl i oprettelsen af " + conversation.getSubject();
         }
@@ -44,11 +41,11 @@ public class ConversationController {
     }
 
     @PostMapping("/addConversation")
-    public ResponseEntity<String> addConversation(@RequestParam Long contactID, @RequestParam Long convoID, @RequestParam Long corpID){
+    public ResponseEntity<String> addConversation(@RequestParam Long contactID, @RequestParam Long convoID, @RequestParam Long corpID) {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         Optional<Conversation> conversation_ = conversationService.findbyId(convoID);
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (contactPerson_.isPresent() && conversation_.isPresent() && corporation_.isPresent()){
+        if (contactPerson_.isPresent() && conversation_.isPresent() && corporation_.isPresent()) {
             ContactPerson contactPerson = contactPerson_.get();
             Conversation conversation = conversation_.get();
             Corporation corporation = corporation_.get();
@@ -59,13 +56,20 @@ public class ConversationController {
             conversationService.save(conversation);
 
             return new ResponseEntity<>("Samtale: " + conversation.getSubject() + " fra Kontaktperson: " + contactPerson.getName() + " oprettet med virksomhed: " + corporation.getName() + " gemt.", HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>("Fejl i oprettelse af samtale", HttpStatus.OK);
         }
+
     }
 
-
-
-
+    @GetMapping("/getAllConversations")
+    public Set<Conversation> getAll() {
+        return conversationService.findall();
+    }
 }
+
+
+
+
+
+
