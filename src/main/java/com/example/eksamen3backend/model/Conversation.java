@@ -16,8 +16,8 @@ public class Conversation {
     private long id;
 
 
-    private String name;
-    private String content;
+    private String subject;
+    private String summary;
 
     @ManyToOne
     @JoinColumn(name = "contactPerson_id")

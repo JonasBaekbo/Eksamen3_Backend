@@ -36,9 +36,9 @@ public class ConversationController {
     public ResponseEntity<String> createConversation(@RequestBody Conversation conversation) {
         String msg = "";
         if (conversationService.save(conversation) != null) {
-            msg = "Samtale oprettet: " + conversation.getName();
+            msg = "Samtale oprettet: " + conversation.getSubject();
         } else {
-            msg = "Fejl i oprettelsen af " + conversation.getName();
+            msg = "Fejl i oprettelsen af " + conversation.getSubject();
         }
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
@@ -58,7 +58,7 @@ public class ConversationController {
 
             conversationService.save(conversation);
 
-            return new ResponseEntity<>("Samtale: " + conversation.getName() + " fra Kontaktperson: " + contactPerson.getName() + " med virksomhed: " + corporation.getName() + " gemt.", HttpStatus.OK);
+            return new ResponseEntity<>("Samtale: " + conversation.getSubject() + " fra Kontaktperson: " + contactPerson.getName() + " oprettet med virksomhed: " + corporation.getName() + " gemt.", HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("Fejl i oprettelse af samtale", HttpStatus.OK);
