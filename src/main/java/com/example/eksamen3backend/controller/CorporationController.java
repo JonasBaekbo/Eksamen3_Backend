@@ -45,7 +45,6 @@ public class CorporationController {
 
                ContactPerson contactPerson = contactPerson_.get();
 
-
                contactPerson.setCorporation(corporation);
 
                contactPersonService.save(contactPerson);

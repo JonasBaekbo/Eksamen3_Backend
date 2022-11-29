@@ -25,11 +25,9 @@ public class Corporation {
     @OneToMany(mappedBy = "corporation")
     private Set<ContactPerson> contactPerson = new HashSet<>();
 
-    //@ManyToOne(mappedBy = "corporation")
-    //private Set<ContactPerson> contactPerson = new HashSet<>();
+    @OneToMany(mappedBy = "corporation")
+    private Set<Conversation> conversations = new HashSet<>();
 
-    /*@OneToMany(mappedBy = "corporation")
-    private Set<Conversation> conversations = new HashSet<>();*/
 
 
 }

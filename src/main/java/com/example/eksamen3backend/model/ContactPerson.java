@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,6 +27,8 @@ public class ContactPerson {
     @JoinColumn(name = "corporation_id")
     private Corporation corporation;
 
+    @OneToMany(mappedBy = "contactPerson")
+    private Set<Conversation> conversations = new HashSet<>();
 
     public ContactPerson() {
         super();

@@ -15,11 +15,19 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String name;
 
-    /*@ManyToOne
+    private String name;
+    private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "contactPerson_id")
     private ContactPerson contactPerson;
 
     @ManyToOne
-    private Corporation corporation;*/
+    @JoinColumn(name = "corporation_id")
+    private Corporation corporation;
+
+    public Conversation(){
+      super();
+    }
 }
