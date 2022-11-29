@@ -18,7 +18,6 @@ public class ContactPersonController {
 
     private ContactPersonService contactPersonService;
     private ContactPersonHistoryService contactPersonHistoryService;
-
     private CorporationService corporationService;
 
     public ContactPersonController(ContactPersonService contactPersonService, ContactPersonHistoryService contactPersonHistoryService, CorporationService corporationService) {
@@ -76,6 +75,19 @@ public class ContactPersonController {
             return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
         }
         return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
+    }
+
+    @PutMapping("/updateContactperson")
+    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson contactPerson){
+        System.out.println("updateuser is called");
+
+        List<ContactPerson> contactpersonList = contactPersonService.findByName(contactPerson.getName());
+        ContactPerson contactPersonToUpdate = contactpersonList.get(0);
+        contactPersonToUpdate.setPhonenumber(contactPerson.getPhonenumber());
+        contactPersonService.save(contactPersonToUpdate);
+        Map<String,String > map = new HashMap<>();
+        map.put("message","Contactperson updatet, if found " + contactPerson.getName());
+        return ResponseEntity.ok(map);
     }
 
 }
