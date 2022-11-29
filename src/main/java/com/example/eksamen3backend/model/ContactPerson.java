@@ -25,9 +25,11 @@ public class ContactPerson {
 
     @ManyToOne
     @JoinColumn(name = "corporation_id")
+    @JsonBackReference("contactPersonCorporation")
     private Corporation corporation;
 
     @OneToMany(mappedBy = "contactPerson")
+    @JsonBackReference("contactPersonConversation")
     private Set<Conversation> conversations = new HashSet<>();
 
     public ContactPerson() {
