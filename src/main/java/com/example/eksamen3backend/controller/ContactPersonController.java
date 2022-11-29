@@ -57,7 +57,7 @@ public class ContactPersonController {
         return ResponseEntity.ok(map);
     }
 
-    @PostMapping("/addCorpToContactpersonto")
+    @PostMapping("/addCorpToContactperson")
     public ResponseEntity<String> addCorpToContactpersonto(@RequestParam Long contactID, @RequestParam Long corpID){
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
