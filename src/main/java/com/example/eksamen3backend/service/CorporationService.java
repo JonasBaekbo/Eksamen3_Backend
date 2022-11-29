@@ -5,6 +5,7 @@ import com.example.eksamen3backend.repository.CorporationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,5 +45,10 @@ public class CorporationService implements ICorporation {
     @Override
     public Optional<Corporation> findbyId(Long id) {
         return corporationRepository.findById(id);
+    }
+
+    @Override
+    public List<Corporation> findByName(String name) {
+        return corporationRepository.findByName(name);
     }
 }

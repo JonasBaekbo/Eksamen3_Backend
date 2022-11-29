@@ -4,6 +4,7 @@ package com.example.eksamen3backend.controller;
 import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.ContactPersonHistory;
 import com.example.eksamen3backend.model.Corporation;
+import com.example.eksamen3backend.model.UpdateEntity;
 import com.example.eksamen3backend.service.ContactPersonHistoryService;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
@@ -44,7 +45,7 @@ public class ContactPersonController {
         return contactPersonService.findall();
     }
 
-    @DeleteMapping("deleteContactPerson")
+    @DeleteMapping("/deleteContactPerson")
     public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson){
         System.out.println("deleteUser is called");
 
@@ -78,15 +79,15 @@ public class ContactPersonController {
     }
 
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson contactPerson){
-        System.out.println("updateuser is called");
+    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity){
 
-        List<ContactPerson> contactpersonList = contactPersonService.findByName(contactPerson.getName());
+        List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
         ContactPerson contactPersonToUpdate = contactpersonList.get(0);
-        contactPersonToUpdate.setPhonenumber(contactPerson.getPhonenumber());
+        contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
+        contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
         contactPersonService.save(contactPersonToUpdate);
         Map<String,String > map = new HashMap<>();
-        map.put("message","Contactperson updatet, if found " + contactPerson.getName());
+        map.put("message","Contactperson updatet, if found " + updateEntity.getContactPersonName());
         return ResponseEntity.ok(map);
     }
 
