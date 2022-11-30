@@ -125,4 +125,65 @@ public class ContactPersonController {
         return ResponseEntity.ok(map);
     }
 
+    /*@PostMapping("/createEmploymentContact")
+    public ResponseEntity<String> createEmploymentContact(@RequestBody EmplymentContract emplymentContract, @RequestParam Long corpID, @RequestParam Long contactPersonID) {
+        String msg = "";
+        ContactPerson contactPerson = new ContactPerson(emplymentContract.getNameContactPerson());
+        System.out.println(emplymentContract.getNameContactPerson());
+        Employment employment = new Employment(emplymentContract.getEmailEmployment(), emplymentContract.getPhonenumberEmployment(),
+                emplymentContract.getPositionEmployment(), emplymentContract.getAddedToCorporationEmployment());
+        if (contactPerson.getName() != null) {
+            if (employment.getEmail() != null) {
+                createContactperson(contactPerson, corpID);
+                createEmployment(employment,corpID,contactPersonID);
+                msg = "Kontaktperson oprettet: " + contactPerson.getName();
+            } else {
+                msg = "Fejl i oprettelsen af employment";
+            }
+        }else{
+            msg = "Fejl i oprettelsen af " + contactPerson.getName();
+        }
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
+    @PostMapping("/createEmployment")
+    public ResponseEntity<String> createEmployment(@RequestBody Employment employment, @RequestParam Long corpID,@RequestParam Long contactPersonID) {
+        String msg = "";
+        if (employmentService.save(employment) != null) {
+            addCorpAndContactPersonToEmployment(employment.getId(), corpID, contactPersonID);
+            msg = "Employment oprettet";
+        } else {
+            msg = "Fejl i oprettelsen af Employment";
+        }
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
+    @PostMapping("/addCorpAndContactPersonToEmployment")
+    public ResponseEntity<String> addCorpAndContactPersonToEmployment(@RequestParam Long employmentId, @RequestParam Long corpID, @RequestParam Long contactID) {
+        Optional<Employment> employment_ = employmentService.findbyId(employmentId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+        if (employment_.isPresent()) {
+            if (contactPerson_.isPresent()) {
+                if (corporation_.isPresent()) {
+                    Corporation corporation = corporation_.get();
+
+                    ContactPerson contactPerson = contactPerson_.get();
+
+                    Employment employment = employment_.get();
+
+                    employment.setContactPerson(contactPerson);
+
+                    employment.setCorporation(corporation);
+
+                    employmentService.save(employment);
+
+                    return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
+                }
+                return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Kunne ikke finde employment med id: " + employmentId, HttpStatus.OK);
+    }*/
 }

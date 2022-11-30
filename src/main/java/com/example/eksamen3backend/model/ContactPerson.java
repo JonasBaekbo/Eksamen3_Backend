@@ -34,4 +34,5 @@ public class ContactPerson {
     public ContactPerson() {
         super();
     }
+
 }
