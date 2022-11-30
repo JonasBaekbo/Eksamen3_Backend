@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Entity
-@JsonIgnoreProperties(value = { "id", "contactPerson" })
+@JsonIgnoreProperties(value = { "id", "contactPerson","name" })
 public class Employment {
 
     @Id

@@ -1,6 +1,7 @@
 package com.example.eksamen3backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "contact_person")
+@JsonIgnoreProperties(value = {"addedToCorporation","movedFromCorporation","phonenumber","email", "position"})
 public class ContactPerson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +34,4 @@ public class ContactPerson {
     public ContactPerson() {
         super();
     }
-
 }

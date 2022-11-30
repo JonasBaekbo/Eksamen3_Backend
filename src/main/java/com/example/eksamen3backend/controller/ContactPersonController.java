@@ -8,6 +8,8 @@ import com.example.eksamen3backend.service.EmploymentService;
 import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,26 @@ public class ContactPersonController {
         this.employmentService = employmentService;
     }
 
+
+/* Json format for /createContactperson" :
+              "name":"ole",
+              "addedToCorporation": "2022-12-10",
+              "movedFromCorporation":null,
+              "phonenumber": 123,
+              "email": "c@d.dk",
+              "position":"sælger"
+*/
     @PostMapping("/createContactperson")
-    public ResponseEntity<String> createUser(@RequestBody ContactPerson contactPerson, @RequestParam Long corpID) {
+    public ResponseEntity<String> createUser(@RequestBody String pureJason, @RequestParam Long corpID) throws JsonProcessingException {
         String msg = "";
-        if (contactPersonService.save(contactPerson) != null) {
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+        ObjectMapper mapper = new ObjectMapper();
+        ContactPerson contactPerson = mapper.readValue(pureJason, ContactPerson.class);
+        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
+            Employment employment = mapper.readValue(pureJason, Employment.class);
+            employment.setContactPerson(contactPerson);
+            employment.setCorporation(corporation_.get());
+            employmentService.save(employment);
             msg = "Kontaktperson oprettet: " + contactPerson.getName();
             addCorpToContactPerson(contactPerson.getId(), corpID);
         } else {
@@ -40,28 +58,28 @@ public class ContactPersonController {
     }
 
     @GetMapping("/getAllContactPersons")
-    public Set<ContactPerson> getAll (){
+    public Set<ContactPerson> getAll() {
         return contactPersonService.findall();
     }
 
     @DeleteMapping("/deleteContactPerson")
-    public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson){
+    public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson) {
         System.out.println("deleteUser is called");
 
         List<ContactPerson> userList = contactPersonService.findByName(contactperson.getName());
         ContactPerson ContactPersonToDelete = userList.get(0);
         contactPersonService.delete(ContactPersonToDelete);
-        Map<String,String > map = new HashMap<>();
-        map.put("message","user deleted, if found " + contactperson.getName());
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "user deleted, if found " + contactperson.getName());
         return ResponseEntity.ok(map);
     }
 
     @PostMapping("/addCorpToContactperson")
-    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID){
+    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID) {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (contactPerson_.isPresent()){
-            if (corporation_.isPresent()){
+        if (contactPerson_.isPresent()) {
+            if (corporation_.isPresent()) {
                 Corporation corporation = corporation_.get();
 
                 ContactPerson contactPerson = contactPerson_.get();
@@ -78,32 +96,32 @@ public class ContactPersonController {
     }
 
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity){
+    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity) {
 
         List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
         ContactPerson contactPersonToUpdate = contactpersonList.get(0);
         Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
 
-        if(updateEntity.getContactPersonNameToUpdate() != null){
+        if (updateEntity.getContactPersonNameToUpdate() != null) {
             contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
         }
-        if(updateEntity.getContactPersonPhonenumberToUpdate() != 0){
+        if (updateEntity.getContactPersonPhonenumberToUpdate() != 0) {
             currentEmployment.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
             //contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
         }
-        if(updateEntity.getContactPersonEmailToUpdate() != null){
+        if (updateEntity.getContactPersonEmailToUpdate() != null) {
             currentEmployment.setEmail(updateEntity.getContactPersonEmailToUpdate());
             //contactPersonToUpdate.setEmail(updateEntity.getContactPersonEmailToUpdate());
         }
-        if(updateEntity.getContactPersonpositionToUpdate() != null){
+        if (updateEntity.getContactPersonpositionToUpdate() != null) {
             currentEmployment.setPosition(updateEntity.getContactPersonpositionToUpdate());
             //contactPersonToUpdate.setPosition(updateEntity.getContactPersonpositionToUpdate());
         }
 
 
         contactPersonService.save(contactPersonToUpdate);
-        Map<String,String > map = new HashMap<>();
-        map.put("message","Contactperson updatet, if found " + updateEntity.getContactPersonName());
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Contactperson updatet, if found " + updateEntity.getContactPersonName());
         return ResponseEntity.ok(map);
     }
 
