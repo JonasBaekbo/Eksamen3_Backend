@@ -4,7 +4,6 @@ import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Conversation;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.service.ContactPersonService;
-import com.example.eksamen3backend.service.ConversationHistoryService;
 import com.example.eksamen3backend.service.ConversationService;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
@@ -17,12 +16,17 @@ import java.util.*;
 public class ConversationController {
 
     private ConversationService conversationService;
-    private ConversationHistoryService conversationHistoryService;
+    //private ConversationHistoryService conversationHistoryService;
     private CorporationService corporationService;
     private ContactPersonService contactPersonService;
 
-    public ConversationController(ConversationService conversationService, ConversationHistoryService conversationHistoryService, CorporationService corporationService, ContactPersonService contactPersonService) {
-        this.conversationHistoryService = conversationHistoryService;
+    public ConversationController(
+            ConversationService conversationService,
+            //ConversationHistoryService conversationHistoryService,
+            CorporationService corporationService,
+            ContactPersonService contactPersonService
+    ) {
+        //this.conversationHistoryService = conversationHistoryService;
         this.conversationService = conversationService;
         this.corporationService = corporationService;
         this.contactPersonService = contactPersonService;

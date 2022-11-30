@@ -2,10 +2,10 @@ package com.example.eksamen3backend.controller;
 
 
 import com.example.eksamen3backend.model.ContactPerson;
-import com.example.eksamen3backend.model.ContactPersonHistory;
 import com.example.eksamen3backend.model.Corporation;
-import com.example.eksamen3backend.model.UpdateEntity;
-import com.example.eksamen3backend.service.ContactPersonHistoryService;
+import com.example.eksamen3backend.model.Employment;
+import com.example.eksamen3backend.service.EmploymentService;
+import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
@@ -18,14 +18,13 @@ import java.util.*;
 public class ContactPersonController {
 
     private ContactPersonService contactPersonService;
-    private ContactPersonHistoryService contactPersonHistoryService;
     private CorporationService corporationService;
+    private EmploymentService employmentService;
 
-    public ContactPersonController(ContactPersonService contactPersonService, ContactPersonHistoryService contactPersonHistoryService, CorporationService corporationService) {
-        this.contactPersonHistoryService = contactPersonHistoryService;
+    public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService) {
         this.contactPersonService = contactPersonService;
         this.corporationService = corporationService;
-
+        this.employmentService = employmentService;
     }
 
     @PostMapping("/createContactperson")
@@ -33,7 +32,7 @@ public class ContactPersonController {
         String msg = "";
         if (contactPersonService.save(contactPerson) != null) {
             msg = "Kontaktperson oprettet: " + contactPerson.getName();
-            addCorpToContactpersonto(contactPerson.getId(), corpID);
+            addCorpToContactPerson(contactPerson.getId(), corpID);
         } else {
             msg = "Fejl i oprettelsen af " + contactPerson.getName();
         }
@@ -58,7 +57,7 @@ public class ContactPersonController {
     }
 
     @PostMapping("/addCorpToContactperson")
-    public ResponseEntity<String> addCorpToContactpersonto(@RequestParam Long contactID, @RequestParam Long corpID){
+    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID){
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
         if (contactPerson_.isPresent()){
@@ -67,7 +66,7 @@ public class ContactPersonController {
 
                 ContactPerson contactPerson = contactPerson_.get();
 
-                contactPerson.setCorporation(corporation);
+                //contactPerson.setCorporation(corporation);
 
                 contactPersonService.save(contactPerson);
 
@@ -83,17 +82,22 @@ public class ContactPersonController {
 
         List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
         ContactPerson contactPersonToUpdate = contactpersonList.get(0);
-        if(updateEntity.getContactPersonPhonenumberToUpdate() != 0){
-            contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
-        }
+        Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
+
         if(updateEntity.getContactPersonNameToUpdate() != null){
             contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
         }
+        if(updateEntity.getContactPersonPhonenumberToUpdate() != 0){
+            currentEmployment.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
+            //contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
+        }
         if(updateEntity.getContactPersonEmailToUpdate() != null){
-            contactPersonToUpdate.setEmail(updateEntity.getContactPersonEmailToUpdate());
+            currentEmployment.setEmail(updateEntity.getContactPersonEmailToUpdate());
+            //contactPersonToUpdate.setEmail(updateEntity.getContactPersonEmailToUpdate());
         }
         if(updateEntity.getContactPersonpositionToUpdate() != null){
-            contactPersonToUpdate.setPosition(updateEntity.getContactPersonpositionToUpdate());
+            currentEmployment.setPosition(updateEntity.getContactPersonpositionToUpdate());
+            //contactPersonToUpdate.setPosition(updateEntity.getContactPersonpositionToUpdate());
         }
 
 

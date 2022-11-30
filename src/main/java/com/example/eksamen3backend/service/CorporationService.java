@@ -33,13 +33,11 @@ public class CorporationService implements ICorporation {
     @Override
     public void delete(Corporation corporation) {
         corporationRepository.delete(corporation);
-
     }
 
     @Override
     public void deleteByID(Long id) {
         corporationRepository.deleteById(id);
-
     }
 
     @Override

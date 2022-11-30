@@ -1,4 +1,4 @@
-package com.example.eksamen3backend.model;
+package com.example.eksamen3backend.utilities;
 
 
 import lombok.Getter;
@@ -11,21 +11,28 @@ public class UpdateEntity {
 
     private String contactPersonName;
     private String contactPersonNameToUpdate;
+
     private int contactPersonPhonenumber;
     private int contactPersonPhonenumberToUpdate;
+
     private String contactPersonposition;
     private String contactPersonpositionToUpdate;
+
     private String contactPersonEmail;
     private String contactPersonEmailToUpdate;
 
     private String corpName;
     private String corpNameToUpdate;
+
     private String corpAddress;
     private String corpAddressToUpdate;
+
     private String corpLogo;
     private String corpLogoToUpdate;
+
     private String corpCity;
     private String corpCityToUpdate;
+
     private String corpCountry;
     private String corpCountryToUpdate;
 }

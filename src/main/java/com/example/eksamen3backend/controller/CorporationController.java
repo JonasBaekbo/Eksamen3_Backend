@@ -1,9 +1,7 @@
 package com.example.eksamen3backend.controller;
 
-import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
-import com.example.eksamen3backend.model.UpdateEntity;
-import com.example.eksamen3backend.service.ContactPersonService;
+import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,6 @@ public class CorporationController {
     @GetMapping("/showCorporations")
     public Set<Corporation> showAll() {
         return corporationService.findall();
-
-
     }
 
     @PutMapping("/updateCorporation")

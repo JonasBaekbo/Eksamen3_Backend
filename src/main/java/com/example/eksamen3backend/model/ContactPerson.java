@@ -1,7 +1,6 @@
 package com.example.eksamen3backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,17 +19,11 @@ public class ContactPerson {
 
     @Column(name = "contactperson_name")
     private String name;
-    @Column(name = "phone_number")
-    private int phonenumber;
-    @Column(name = "contactperson_email")
-    private String email;
-    @Column(name = "contactperson_position")
-    private String position;
 
-    @ManyToOne
-    @JoinColumn(name = "corporation_id")
-    @JsonBackReference("contactPersonCorporation")
-    private Corporation corporation;
+//    @ManyToOne
+//    @JoinColumn(name = "corporation_id")
+//    @JsonBackReference("contactPersonCorporation")
+//    private Corporation corporation;
 
     @OneToMany(mappedBy = "contactPerson")
     @JsonBackReference("contactPersonConversation")
@@ -39,4 +32,5 @@ public class ContactPerson {
     public ContactPerson() {
         super();
     }
+
 }

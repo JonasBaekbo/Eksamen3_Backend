@@ -1,7 +1,6 @@
 package com.example.eksamen3backend.service;
 
 import com.example.eksamen3backend.model.ContactPerson;
-import com.example.eksamen3backend.repository.ContactPersonHistoryRepository;
 import com.example.eksamen3backend.repository.ContactPersonRepository;
 import org.springframework.stereotype.Service;
 
