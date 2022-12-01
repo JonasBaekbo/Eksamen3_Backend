@@ -19,14 +19,13 @@ public class CorporationController {
     }
 
     @PostMapping("/createCorporation")
-    public ResponseEntity<String> createCorporation(@RequestBody Corporation corporation) {
-        String msg = "";
+    public ResponseEntity<Set<Corporation>> createCorporation(@RequestBody Corporation corporation) {
         if (corporationService.save(corporation) != null) {
-            msg = "Virksomhed oprettet: " + corporation.getName();
+            System.out.println("Virksomhed oprettet: " + corporation.getName());
         } else {
-            msg = "Fejl i oprettelsen af " + corporation.getName();
+            System.out.println("Fejl i oprettelse af: " + corporation.getName());
         }
-        return new ResponseEntity<>(msg, HttpStatus.OK);
+        return new ResponseEntity<>(showAll(), HttpStatus.OK);
     }
 
 
