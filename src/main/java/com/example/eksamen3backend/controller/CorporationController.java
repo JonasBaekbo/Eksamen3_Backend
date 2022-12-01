@@ -1,5 +1,6 @@
 package com.example.eksamen3backend.controller;
 
+import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.CorporationService;
@@ -28,6 +29,16 @@ public class CorporationController {
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/findCorporationByName")
+    public ResponseEntity<Corporation> findCorporationByName(@RequestParam String name){
+
+        List<Corporation> corporationSet = corporationService.findByName(name);
+        Corporation corporation = corporationSet.get(0);
+
+        return new ResponseEntity<>(corporation,HttpStatus.OK);
+
+    }
+
 
     @GetMapping("/showCorporations")
     public Set<Corporation> showAll() {
@@ -39,6 +50,7 @@ public class CorporationController {
 
         List<Corporation> corpList = corporationService.findByName(updateEntity.getCorpName());
         Corporation corporationToUpdate = corpList.get(0);
+
         if(updateEntity.getCorpNameToUpdate() != null){
             corporationToUpdate.setName(updateEntity.getCorpNameToUpdate());
         }
