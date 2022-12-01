@@ -109,27 +109,31 @@ public class ContactPersonController {
 
 
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity) {
+    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity, @RequestParam long conId) {
 
-        List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
-        ContactPerson contactPersonToUpdate = contactpersonList.get(0);
-        Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(conId);
 
-        if (updateEntity.getContactPersonNameToUpdate() != null) {
-            contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
-        }
-        if (updateEntity.getContactPersonPhonenumberToUpdate() != 0) {
-            currentEmployment.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
-        }
-        if (updateEntity.getContactPersonEmailToUpdate() != null) {
-            currentEmployment.setEmail(updateEntity.getContactPersonEmailToUpdate());
-        }
-        if (updateEntity.getContactPersonpositionToUpdate() != null) {
-            currentEmployment.setPosition(updateEntity.getContactPersonpositionToUpdate());
-        }
+        //List<ContactPerson> contactpersonList = contactPersonService.findByName(updateEntity.getContactPersonName());
 
+        if (contactPerson_.isPresent()) {
+            ContactPerson contactPersonToUpdate = contactPerson_.get();
+           Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
 
-        contactPersonService.save(contactPersonToUpdate);
+            if (updateEntity.getContactPersonNameToUpdate() != null) {
+                contactPersonToUpdate.setName(updateEntity.getContactPersonNameToUpdate());
+            }
+            if (updateEntity.getContactPersonPhonenumberToUpdate() != 0) {
+                currentEmployment.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
+            }
+            if (updateEntity.getContactPersonEmailToUpdate() != null) {
+                currentEmployment.setEmail(updateEntity.getContactPersonEmailToUpdate());
+            }
+            if (updateEntity.getContactPersonpositionToUpdate() != null) {
+                currentEmployment.setPosition(updateEntity.getContactPersonpositionToUpdate());
+            }
+
+            contactPersonService.save(contactPersonToUpdate);
+        }
         Map<String, String> map = new HashMap<>();
         map.put("message", "Contactperson updatet, if found " + updateEntity.getContactPersonName());
         return ResponseEntity.ok(map);
@@ -137,11 +141,21 @@ public class ContactPersonController {
 
 
     @GetMapping("/findContactPersonByName")
-    public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name){
+    public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
         List<ContactPerson> contactPeople = contactPersonService.findByName(name);
-        ContactPerson contactPerson=contactPeople.get(0);
+        ContactPerson contactPerson = contactPeople.get(0);
 
-        return new ResponseEntity<>(contactPerson,HttpStatus.OK);
+        return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+    }
+
+    @GetMapping("/findContactPersonById")
+    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contId) {
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        if (contactPerson_.isPresent()) {
+            ContactPerson contactPerson = contactPerson_.get();
+            return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }
 /*
