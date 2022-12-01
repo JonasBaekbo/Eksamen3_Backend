@@ -40,9 +40,8 @@ public class ContactPersonController {
     */
     // opretter ny contactPerson og ny employment og knytter de to sammen
     @PostMapping("/createContactPerson")
-    public ResponseEntity<String> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
+    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String msg = "";
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
         ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
         if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
@@ -50,11 +49,11 @@ public class ContactPersonController {
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
             employmentService.save(employment);
-            msg = "Kontaktperson oprettet: " + contactPerson.getName();
+            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
         } else {
-            msg = "Fejl i oprettelsen af " + contactPerson.getName();
+            System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
         }
-        return new ResponseEntity<>(msg, HttpStatus.OK);
+        return new ResponseEntity<>(getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/getAllContactPersons")

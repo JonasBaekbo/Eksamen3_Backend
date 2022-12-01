@@ -32,15 +32,14 @@ public class ConversationController {
 
 
     @PostMapping("/createConversation")
-    public ResponseEntity<String> createConversation(@RequestBody Conversation conversation, @RequestParam Long contactID, @RequestParam Long corpID) {
-        String msg = "";
+    public ResponseEntity<Set<Conversation>> createConversation(@RequestBody Conversation conversation, @RequestParam Long contactID, @RequestParam Long corpID) {
         if (conversationService.save(conversation) != null) {
-            msg = "Samtale oprettet: " + conversation.getSubject();
+            System.out.println("Samtale oprettet: " + conversation.getSubject());
             addConversation(conversation.getId(), corpID, contactID);
         } else {
-            msg = "Fejl i oprettelsen af " + conversation.getSubject();
+            System.out.println("Fejl i oprettelsen af " + conversation.getSubject());
         }
-        return new ResponseEntity<>(msg, HttpStatus.OK);
+        return new ResponseEntity<>(getAll(), HttpStatus.OK);
     }
 
     @PostMapping("/addConversation")
