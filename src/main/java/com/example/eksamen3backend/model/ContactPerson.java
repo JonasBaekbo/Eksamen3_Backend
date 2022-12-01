@@ -22,10 +22,6 @@ public class ContactPerson {
     @Column(name = "contactperson_name")
     private String name;
 
-//    @ManyToOne
-//    @JoinColumn(name = "corporation_id")
-//    @JsonBackReference("contactPersonCorporation")
-//    private Corporation corporation;
 
     @OneToMany(mappedBy = "contactPerson")
     @JsonBackReference("contactPersonConversation")

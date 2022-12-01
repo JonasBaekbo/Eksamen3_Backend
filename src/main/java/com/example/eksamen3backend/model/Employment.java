@@ -44,6 +44,10 @@ public class Employment {
     @Column(name = "contactperson_position")
     private String position;
 
+    public Employment(){
+
+    }
+
     public Employment(String emailEmployment, int phonenumberEmployment, String positionEmployment, Timestamp addedToCorporationEmployment) {
         this.email = emailEmployment;
         this.phonenumber = phonenumberEmployment;
@@ -58,7 +62,13 @@ public class Employment {
             return null;
         }
     }
-    public Employment(){
 
+    public String getCorporationName() {
+        if (this.corporation != null) {
+            return this.corporation.getName();
+        } else {
+            return null;
+        }
     }
+
 }

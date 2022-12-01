@@ -15,22 +15,21 @@ import java.util.*;
 @RestController
 public class ConversationController {
 
+
     private ConversationService conversationService;
-    //private ConversationHistoryService conversationHistoryService;
     private CorporationService corporationService;
     private ContactPersonService contactPersonService;
 
     public ConversationController(
             ConversationService conversationService,
-            //ConversationHistoryService conversationHistoryService,
             CorporationService corporationService,
             ContactPersonService contactPersonService
     ) {
-        //this.conversationHistoryService = conversationHistoryService;
         this.conversationService = conversationService;
         this.corporationService = corporationService;
         this.contactPersonService = contactPersonService;
     }
+
 
     @PostMapping("/createConversation")
     public ResponseEntity<String> createConversation(@RequestBody Conversation conversation, @RequestParam Long contactID, @RequestParam Long corpID) {
@@ -70,7 +69,6 @@ public class ConversationController {
     public Set<Conversation> getAll() {
         return conversationService.findall();
     }
-    //
 }
 
 

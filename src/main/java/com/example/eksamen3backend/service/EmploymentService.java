@@ -58,4 +58,9 @@ employmentRepository.deleteById(aLong);
         return employmentRepository.findByCorporationAndMovedFromCorporationIsNull(corporation);
     }
 
+    @Override
+    public Set<Employment> findEmploymentsByContactPersonOrderByAddedToCorporationDesc(ContactPerson contactPerson) {
+        return employmentRepository.findEmploymentsByContactPersonOrderByAddedToCorporationDesc(contactPerson);
+    }
+
 }

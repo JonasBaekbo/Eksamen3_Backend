@@ -30,27 +30,27 @@ public class ContactPersonController {
     }
 
 
-/* Json format for /createContactperson" :
-              "name":"ole",
-              "addedToCorporation": "2022-12-10",
-              "movedFromCorporation":null,
-              "phonenumber": 123,
-              "email": "c@d.dk",
-              "position":"sælger"
-*/
-    @PostMapping("/createContactperson")
-    public ResponseEntity<String> createUser(@RequestBody String pureJason, @RequestParam Long corpID) throws JsonProcessingException {
+    /* Json format for "/createContactPerson" :
+                  {"name":"ole",
+                  "addedToCorporation": "2022-12-10",
+                  "movedFromCorporation":null,
+                  "phonenumber": 123,
+                  "email": "c@d.dk",
+                  "position":"sælger"}
+    */
+    // opretter ny contactPerson og ny employment og knytter de to sammen
+    @PostMapping("/createContactPerson")
+    public ResponseEntity<String> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
         String msg = "";
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        ObjectMapper mapper = new ObjectMapper();
-        ContactPerson contactPerson = mapper.readValue(pureJason, ContactPerson.class);
+        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
         if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
-            Employment employment = mapper.readValue(pureJason, Employment.class);
+            Employment employment = mapper.readValue(Json, Employment.class);
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
             employmentService.save(employment);
             msg = "Kontaktperson oprettet: " + contactPerson.getName();
-            addCorpToContactPerson(contactPerson.getId(), corpID);
         } else {
             msg = "Fejl i oprettelsen af " + contactPerson.getName();
         }
@@ -62,38 +62,52 @@ public class ContactPersonController {
         return contactPersonService.findall();
     }
 
-    @DeleteMapping("/deleteContactPerson")
-    public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson) {
-        System.out.println("deleteUser is called");
+    //sætter en slutdato på en employment.
+    @PutMapping("/setEndDateOnEmployment")
+    public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empId) {
+        Map<String, String> message = new HashMap<>();
 
-        List<ContactPerson> userList = contactPersonService.findByName(contactperson.getName());
-        ContactPerson ContactPersonToDelete = userList.get(0);
-        contactPersonService.delete(ContactPersonToDelete);
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "user deleted, if found " + contactperson.getName());
-        return ResponseEntity.ok(map);
+        Optional<Employment> employment_ = employmentService.findbyId(empId);
+        if (employment_.isPresent()) {
+            Employment currentEmployment = employment_.get();
+            currentEmployment.setMovedFromCorporation(employment.getMovedFromCorporation());
+            employmentService.save(currentEmployment);
+
+            message.put("message", "employment end-date set to " + employment.getMovedFromCorporation());
+
+        } else {
+
+            message.put("message", "no employment was found");
+        }
+        return ResponseEntity.ok(message);
     }
 
-    @PostMapping("/addCorpToContactperson")
-    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID) {
+    // laver ny employment på en kontaktperson, og afslutter den nuværende hvis der er noget.
+    @PostMapping("/makeNewEmployment")
+    public ResponseEntity<String> makeNewEmployment(@RequestParam Long contactID, @RequestParam Long corpID, @RequestBody Employment employment) {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (contactPerson_.isPresent()) {
-            if (corporation_.isPresent()) {
-                Corporation corporation = corporation_.get();
 
-                ContactPerson contactPerson = contactPerson_.get();
-
-                //contactPerson.setCorporation(corporation);
-
-                contactPersonService.save(contactPerson);
-
-                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
+        if ((contactPerson_.isPresent()) && (corporation_.isPresent())) {
+            Corporation corporation = corporation_.get();
+            ContactPerson contactPerson = contactPerson_.get();
+            //tjekker om der ligger en aktiv employment på kontaktpersonen, hvis der findes en, sættes den til at slutte når den næste starter
+            Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPerson);
+            if (currentEmployment != null) {
+                currentEmployment.setMovedFromCorporation(employment.getAddedToCorporation());
+                employmentService.save(currentEmployment);
             }
-            return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
+
+            employment.setCorporation(corporation);
+            employment.setContactPerson(contactPerson);
+
+            employmentService.save(employment);
+
+            return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
+        return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
     }
+
 
     @PutMapping("/updateContactperson")
     public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity) {
@@ -107,15 +121,12 @@ public class ContactPersonController {
         }
         if (updateEntity.getContactPersonPhonenumberToUpdate() != 0) {
             currentEmployment.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
-            //contactPersonToUpdate.setPhonenumber(updateEntity.getContactPersonPhonenumberToUpdate());
         }
         if (updateEntity.getContactPersonEmailToUpdate() != null) {
             currentEmployment.setEmail(updateEntity.getContactPersonEmailToUpdate());
-            //contactPersonToUpdate.setEmail(updateEntity.getContactPersonEmailToUpdate());
         }
         if (updateEntity.getContactPersonpositionToUpdate() != null) {
             currentEmployment.setPosition(updateEntity.getContactPersonpositionToUpdate());
-            //contactPersonToUpdate.setPosition(updateEntity.getContactPersonpositionToUpdate());
         }
 
 
@@ -124,8 +135,30 @@ public class ContactPersonController {
         map.put("message", "Contactperson updatet, if found " + updateEntity.getContactPersonName());
         return ResponseEntity.ok(map);
     }
+}
+/*
 
-    /*@PostMapping("/createEmploymentContact")
+    @PostMapping("/addCorpToContactperson")
+    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID) {
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+        if (contactPerson_.isPresent()) {
+            if (corporation_.isPresent()) {
+                Corporation corporation = corporation_.get();
+
+                ContactPerson contactPerson = contactPerson_.get();
+
+
+                contactPersonService.save(contactPerson);
+
+                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
+    }
+
+   @PostMapping("/createEmploymentContact")
     public ResponseEntity<String> createEmploymentContact(@RequestBody EmplymentContract emplymentContract, @RequestParam Long corpID, @RequestParam Long contactPersonID) {
         String msg = "";
         ContactPerson contactPerson = new ContactPerson(emplymentContract.getNameContactPerson());
@@ -185,5 +218,18 @@ public class ContactPersonController {
             return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
         }
         return new ResponseEntity<>("Kunne ikke finde employment med id: " + employmentId, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteContactPerson")
+    public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson) {
+        System.out.println("deleteUser is called");
+
+        List<ContactPerson> userList = contactPersonService.findByName(contactperson.getName());
+        ContactPerson ContactPersonToDelete = userList.get(0);
+        contactPersonService.delete(ContactPersonToDelete);
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "user deleted, if found " + contactperson.getName());
+        return ResponseEntity.ok(map);
     }*/
-}
+
+

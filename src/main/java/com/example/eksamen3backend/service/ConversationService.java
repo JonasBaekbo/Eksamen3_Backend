@@ -1,10 +1,13 @@
 package com.example.eksamen3backend.service;
 
+import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Conversation;
+import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.repository.ConversationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,5 +47,15 @@ public class ConversationService implements IConversation {
     @Override
     public Optional<Conversation> findbyId(Long id) {
         return conversationRepository.findById(id);
+    }
+
+    @Override
+    public Set<Conversation> getConversationsByCorporationOrderByDateDesc(Corporation corporation) {
+        return conversationRepository.getConversationsByCorporationOrderByDateDesc(corporation);
+    }
+
+    @Override
+    public Set<Conversation> getConversationsByContactPersonOrderByDateDesc(ContactPerson contactPerson) {
+        return conversationRepository.getConversationsByContactPersonOrderByDateDesc(contactPerson);
     }
 }
