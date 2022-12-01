@@ -53,36 +53,35 @@ public class CorporationController {
     }
 
     @PutMapping("/updateCorporation")
-    public ResponseEntity<Map> updateContactperson(@RequestBody UpdateEntity updateEntity, @RequestParam long corpId) {
+    public ResponseEntity<Map> updateContactperson(@RequestBody Corporation updateEntity, @RequestParam long corpId) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
 
 //        List<Corporation> corpList = corporationService.findByName(updateEntity.getCorpName());
 //        Corporation corporationToUpdate = corpList.get(0);
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
-            {
 
-                if (updateEntity.getCorpNameToUpdate() != null) {
-                    corporationToUpdate.setName(updateEntity.getCorpNameToUpdate());
+                if (corporationToUpdate.getName() != null) {
+                    corporationToUpdate.setName(updateEntity.getName());
                 }
-                if (updateEntity.getCorpCityToUpdate() != null) {
-                    corporationToUpdate.setCity(updateEntity.getCorpCityToUpdate());
-                }
-                if (updateEntity.getCorpAddressToUpdate() != null) {
-                    corporationToUpdate.setAddress(updateEntity.getCorpAddressToUpdate());
-                }
-                if (updateEntity.getCorpLogoToUpdate() != null) {
-                    corporationToUpdate.setLogo(updateEntity.getCorpLogoToUpdate());
-                }
-                if (updateEntity.getCorpCountryToUpdate() != null) {
-                    corporationToUpdate.setCountry(updateEntity.getCorpCountryToUpdate());
-                }
+            if (corporationToUpdate.getCity() != null) {
+                corporationToUpdate.setCity(updateEntity.getCity());
             }
+            if (corporationToUpdate.getAddress() != null) {
+                corporationToUpdate.setAddress(updateEntity.getAddress());
+            }
+            if (corporationToUpdate.getLogo() != null) {
+                corporationToUpdate.setLogo(updateEntity.getLogo());
+            }
+                if (corporationToUpdate.getCountry() != null) {
+                    corporationToUpdate.setCountry(updateEntity.getCountry());
+                }
+            System.out.println(corporationToUpdate.getName());
             corporationService.save(corporationToUpdate);
 
         }
         Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson updatet, if found " + updateEntity.getCorpName());
+        map.put("message", "Contactperson updatet, if found " + updateEntity.getName());
         return ResponseEntity.ok(map);
     }
 }
