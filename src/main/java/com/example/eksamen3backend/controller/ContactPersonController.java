@@ -134,6 +134,15 @@ public class ContactPersonController {
         map.put("message", "Contactperson updatet, if found " + updateEntity.getContactPersonName());
         return ResponseEntity.ok(map);
     }
+
+
+    @GetMapping("/findContactPersonByName")
+    public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name){
+        List<ContactPerson> contactPeople = contactPersonService.findByName(name);
+        ContactPerson contactPerson=contactPeople.get(0);
+
+        return new ResponseEntity<>(contactPerson,HttpStatus.OK);
+    }
 }
 /*
 

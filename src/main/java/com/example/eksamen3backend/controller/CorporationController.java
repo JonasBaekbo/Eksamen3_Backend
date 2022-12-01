@@ -31,12 +31,10 @@ public class CorporationController {
 
     @GetMapping("/findCorporationByName")
     public ResponseEntity<Corporation> findCorporationByName(@RequestParam String name){
-
-        List<Corporation> corporationSet = corporationService.findByName(name);
-        Corporation corporation = corporationSet.get(0);
+        List<Corporation> corporationList = corporationService.findByName(name);
+        Corporation corporation = corporationList.get(0);
 
         return new ResponseEntity<>(corporation,HttpStatus.OK);
-
     }
 
 
