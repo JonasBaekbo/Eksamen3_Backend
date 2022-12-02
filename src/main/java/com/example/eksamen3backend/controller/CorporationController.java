@@ -61,9 +61,10 @@ public class CorporationController {
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
 
-                if (corporationToUpdate.getName() != null) {
-                    corporationToUpdate.setName(updateEntity.getName());
-                }
+
+            if (corporationToUpdate.getName() != null) {
+                corporationToUpdate.setName(updateEntity.getName());
+            }
             if (corporationToUpdate.getCity() != null) {
                 corporationToUpdate.setCity(updateEntity.getCity());
             }
@@ -73,9 +74,9 @@ public class CorporationController {
             if (corporationToUpdate.getLogo() != null) {
                 corporationToUpdate.setLogo(updateEntity.getLogo());
             }
-                if (corporationToUpdate.getCountry() != null) {
-                    corporationToUpdate.setCountry(updateEntity.getCountry());
-                }
+            if (corporationToUpdate.getCountry() != null) {
+                corporationToUpdate.setCountry(updateEntity.getCountry());
+            }
             System.out.println(corporationToUpdate.getName());
             corporationService.save(corporationToUpdate);
 
