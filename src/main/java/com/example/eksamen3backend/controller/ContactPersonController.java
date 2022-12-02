@@ -66,7 +66,6 @@ public class ContactPersonController {
                   "email": "c@d.dk",
                   "position":"sælger"}
     */
-
     // opretter ny contactPerson og ny employment og knytter de to sammen
     @PostMapping("/createContactPerson")
     public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
