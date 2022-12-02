@@ -63,6 +63,7 @@ public class Employment {
         }
     }
 
+
     public String getCorporationName() {
         if (this.corporation != null) {
             return this.corporation.getName();

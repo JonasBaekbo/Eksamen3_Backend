@@ -66,16 +66,38 @@ public class ContactPersonController {
                   "email": "c@d.dk",
                   "position":"sælger"}
     */
-    // opretter ny contactPerson og ny employment og knytter de to sammen
-    @PostMapping("/createContactPerson")
-    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+//    // opretter ny contactPerson og ny employment og knytter de to sammen
+//    @PostMapping("/createContactPerson")
+//    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        JsonNode rootNode = mapper.readTree(Json);
+//        JsonNode idNode = rootNode.path("corpID");
+//        Long corpIdText= idNode.asLong();
+//        Optional<Corporation> corporation_ = corporationService.findbyId(corpIdText);
+//        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
+//        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
+//            Employment employment = mapper.readValue(Json, Employment.class);
+//            employment.setContactPerson(contactPerson);
+//            employment.setCorporation(corporation_.get());
+//            employmentService.save(employment);
+//            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
+//        } else {
+//            System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
+//        }
+//        return new ResponseEntity<>(getAll(), HttpStatus.OK);
+//    }
+        // opretter ny contactPerson og ny employment og knytter de to sammen
+        @PostMapping("/createContactPerson")
+        public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(Json);
         JsonNode idNode = rootNode.path("corpID");
-        Long corpIdText= idNode.asLong();
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpIdText);
-        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
-        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
+        Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
+        JsonNode nameNode=rootNode.path("name");
+        ContactPerson contactPerson= new ContactPerson();
+        contactPerson.setName(nameNode.asText());
+        contactPersonService.save(contactPerson);
+        if ( (corporation_.isPresent())) {
             Employment employment = mapper.readValue(Json, Employment.class);
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
@@ -86,6 +108,7 @@ public class ContactPersonController {
         }
         return new ResponseEntity<>(getAll(), HttpStatus.OK);
     }
+
 
     @GetMapping("/getAllContactPersons")
     public Set<ContactPerson> getAll() {

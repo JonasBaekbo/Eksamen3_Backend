@@ -36,16 +36,12 @@ public class Corporation {
     @Column(name = "corporation_country")
     private String country;
 
-//    @OneToMany(mappedBy = "corporation")
-//    @JsonBackReference("contactPerson")
-//    private Set<ContactPerson> contactPerson = new HashSet<>();
-
     @OneToMany(mappedBy = "corporation")
     @JsonBackReference("conversation")
     private Set<Conversation> conversations = new HashSet<>();
 
-    //@JsonManagedReference
-    @OneToMany//(mappedBy = "corporation")
+
+    @OneToMany
     @JsonBackReference("employments")
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "corporation_id", referencedColumnName = "id")
