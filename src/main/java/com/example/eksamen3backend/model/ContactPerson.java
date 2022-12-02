@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "contact_person")
-@JsonIgnoreProperties(value = {"addedToCorporation","movedFromCorporation","phonenumber","email", "position"})
+@JsonIgnoreProperties(value = {"addedToCorporation","movedFromCorporation","phonenumber","email", "position","corpID"})
 public class ContactPerson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

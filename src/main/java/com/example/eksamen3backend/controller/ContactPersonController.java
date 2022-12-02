@@ -9,6 +9,7 @@ import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +39,42 @@ public class ContactPersonController {
                   "email": "c@d.dk",
                   "position":"sælger"}
     */
+//    // opretter ny contactPerson og ny employment og knytter de to sammen
+//    @PostMapping("/createContactPerson")
+//    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+//        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
+//        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
+//            Employment employment = mapper.readValue(Json, Employment.class);
+//            employment.setContactPerson(contactPerson);
+//            employment.setCorporation(corporation_.get());
+//            employmentService.save(employment);
+//            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
+//        } else {
+//            System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
+//        }
+//        return new ResponseEntity<>(getAll(), HttpStatus.OK);
+//    }
+
+        /* Json format for "/createContactPerson" :
+                  {"corpID":1,
+                  "name":"ole",
+                  "addedToCorporation": "2022-12-10",
+                  "movedFromCorporation":null,
+                  "phonenumber": 123,
+                  "email": "c@d.dk",
+                  "position":"sælger"}
+    */
+
     // opretter ny contactPerson og ny employment og knytter de to sammen
     @PostMapping("/createContactPerson")
-    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
+    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+        JsonNode rootNode = mapper.readTree(Json);
+        JsonNode idNode = rootNode.path("corpID");
+        Long corpIdText= idNode.asLong();
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpIdText);
         ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
         if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
             Employment employment = mapper.readValue(Json, Employment.class);
