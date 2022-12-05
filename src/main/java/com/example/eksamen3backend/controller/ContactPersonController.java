@@ -181,9 +181,9 @@ public class ContactPersonController {
 //    }
 
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson updateEntity, @RequestParam long conId) {
+    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson updateEntity, @RequestParam long contId) {
 
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(conId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
