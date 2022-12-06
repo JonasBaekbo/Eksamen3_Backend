@@ -35,12 +35,12 @@ public class Conversation {
     }
 
     @JsonManagedReference
-    public String currentcontactPerson() {
+    public String currentContactPerson() {
         return contactPerson.getName();
     }
 
     @JsonManagedReference
-    public String currentcorporation() {
+    public String currentCorporation() {
         return corporation.getName();
     }
 
