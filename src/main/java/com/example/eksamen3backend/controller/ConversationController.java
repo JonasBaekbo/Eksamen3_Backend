@@ -68,6 +68,16 @@ public class ConversationController {
     public Set<Conversation> getAll() {
         return conversationService.findall();
     }
+
+    @GetMapping("/findConversationById")
+    public ResponseEntity<Conversation> findConversationById(@RequestParam long convId) {
+        Optional<Conversation> conversation_ = conversationService.findbyId(convId);
+        if (conversation_.isPresent()) {
+            Conversation conversation = conversation_.get();
+            return new ResponseEntity<>(conversation, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 }
 
 
