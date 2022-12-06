@@ -1,5 +1,6 @@
 package com.example.eksamen3backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +32,16 @@ public class Conversation {
 
     public Conversation(){
       super();
+    }
+
+    @JsonManagedReference
+    public String currentcontactPerson() {
+        return contactPerson.getName();
+    }
+
+    @JsonManagedReference
+    public String currentcorporation() {
+        return corporation.getName();
     }
 
 }
