@@ -36,6 +36,9 @@ public class Corporation {
     @Column(name = "corporation_country")
     private String country;
 
+    @Column(name = "corporation_status")
+    private Integer isActive;
+
     @OneToMany(mappedBy = "corporation")
     @JsonBackReference("conversation")
     private Set<Conversation> conversations = new HashSet<>();

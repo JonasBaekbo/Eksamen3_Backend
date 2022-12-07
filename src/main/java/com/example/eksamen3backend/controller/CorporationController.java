@@ -1,5 +1,6 @@
 package com.example.eksamen3backend.controller;
 
+import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ public class CorporationController {
 
     @PostMapping("/createCorporation")
     public ResponseEntity<Set<Corporation>> createCorporation(@RequestBody Corporation corporation) {
+
+        corporation.setIsActive(1);
+        corporationService.save(corporation);
+
         if (corporationService.save(corporation) != null) {
             System.out.println("Virksomhed oprettet: " + corporation.getName());
         } else {
@@ -82,6 +87,21 @@ public class CorporationController {
         }
         Map<String, String> map = new HashMap<>();
         map.put("message", "Contactperson updatet, if found " + updateEntity.getName());
+        return ResponseEntity.ok(map);
+    }
+    @PutMapping("/archiveCorporation")
+    public ResponseEntity<Map> archiveCorporation(@RequestBody Corporation updateEntity, @RequestParam long corpId) {
+
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
+
+        if (corporation_.isPresent()) {
+            Corporation corporationtoUpdate = corporation_.get();
+            corporationtoUpdate.setIsActive(updateEntity.getIsActive());
+
+            corporationService.save(corporationtoUpdate);
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Corporation archived");
         return ResponseEntity.ok(map);
     }
 }
