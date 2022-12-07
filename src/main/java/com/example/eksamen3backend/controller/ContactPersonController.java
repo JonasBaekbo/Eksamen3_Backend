@@ -32,72 +32,26 @@ public class ContactPersonController {
 
 
     /* Json format for "/createContactPerson" :
-                  {"name":"ole",
-                  "addedToCorporation": "2022-12-10",
-                  "movedFromCorporation":null,
-                  "phonenumber": 123,
-                  "email": "c@d.dk",
-                  "position":"sælger"}
-    */
-//    // opretter ny contactPerson og ny employment og knytter de to sammen
-//    @PostMapping("/createContactPerson")
-//    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json, @RequestParam Long corpID) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-//        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
-//        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
-//            Employment employment = mapper.readValue(Json, Employment.class);
-//            employment.setContactPerson(contactPerson);
-//            employment.setCorporation(corporation_.get());
-//            employmentService.save(employment);
-//            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
-//        } else {
-//            System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
-//        }
-//        return new ResponseEntity<>(getAll(), HttpStatus.OK);
-//    }
-
-        /* Json format for "/createContactPerson" :
-                  {"corpID":1,
-                  "name":"ole",
-                  "addedToCorporation": "2022-12-10",
-                  "movedFromCorporation":null,
-                  "phonenumber": 123,
-                  "email": "c@d.dk",
-                  "position":"sælger"}
-    */
-//    // opretter ny contactPerson og ny employment og knytter de to sammen
-//    @PostMapping("/createContactPerson")
-//    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode rootNode = mapper.readTree(Json);
-//        JsonNode idNode = rootNode.path("corpID");
-//        Long corpIdText= idNode.asLong();
-//        Optional<Corporation> corporation_ = corporationService.findbyId(corpIdText);
-//        ContactPerson contactPerson = mapper.readValue(Json, ContactPerson.class);
-//        if ((contactPersonService.save(contactPerson) != null) && (corporation_.isPresent())) {
-//            Employment employment = mapper.readValue(Json, Employment.class);
-//            employment.setContactPerson(contactPerson);
-//            employment.setCorporation(corporation_.get());
-//            employmentService.save(employment);
-//            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
-//        } else {
-//            System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
-//        }
-//        return new ResponseEntity<>(getAll(), HttpStatus.OK);
-//    }
-        // opretter ny contactPerson og ny employment og knytter de to sammen
-        @PostMapping("/createContactPerson")
-        public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+     {"corpID":1,
+    "name":"ole",
+    "addedToCorporation": "2022-12-10",
+     "movedFromCorporation":null,
+    "phonenumber": 123,
+    "email": "c@d.dk",
+    "position":"sælger"}
+*/
+    // opretter ny contactPerson og ny employment og knytter de to sammen
+    @PostMapping("/createContactPerson")
+    public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(Json);
         JsonNode idNode = rootNode.path("corpID");
         Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
-        JsonNode nameNode=rootNode.path("name");
-        ContactPerson contactPerson= new ContactPerson();
+        JsonNode nameNode = rootNode.path("name");
+        ContactPerson contactPerson = new ContactPerson();
         contactPerson.setName(nameNode.asText());
         contactPersonService.save(contactPerson);
-        if ( (corporation_.isPresent())) {
+        if ((corporation_.isPresent())) {
             Employment employment = mapper.readValue(Json, Employment.class);
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
@@ -160,41 +114,6 @@ public class ContactPersonController {
         }
         return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
     }
-//
-//        // laver ny employment på en kontaktperson.
-//    @PostMapping("/makeNewEmployment")
-//    public ResponseEntity<String> makeNewEmployment(@RequestParam Long contactID, @RequestParam Long corpID, @RequestBody Employment employment) {
-//        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
-//        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-//
-//        if ((contactPerson_.isPresent()) && (corporation_.isPresent())) {
-//            Corporation corporation = corporation_.get();
-//            ContactPerson contactPerson = contactPerson_.get();
-//                        employment.setCorporation(corporation);
-//            employment.setContactPerson(contactPerson);
-//
-//            employmentService.save(employment);
-//
-//            return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
-//    }
-
-    @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson updateEntity, @RequestParam long contId) {
-
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
-
-        if (contactPerson_.isPresent()) {
-            ContactPerson contactPersonToUpdate = contactPerson_.get();
-            contactPersonToUpdate.setName(updateEntity.getName());
-
-            contactPersonService.save(contactPersonToUpdate);
-        }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson updatet, if found " + updateEntity.getName());
-        return ResponseEntity.ok(map);
-    }
 
 
     @GetMapping("/findContactPersonByName")
@@ -214,101 +133,47 @@ public class ContactPersonController {
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
-}
-/*
 
-    @PostMapping("/addCorpToContactperson")
-    public ResponseEntity<String> addCorpToContactPerson(@RequestParam Long contactID, @RequestParam Long corpID) {
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (contactPerson_.isPresent()) {
-            if (corporation_.isPresent()) {
-                Corporation corporation = corporation_.get();
-
-                ContactPerson contactPerson = contactPerson_.get();
-
-
-                contactPersonService.save(contactPerson);
-
-                return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
-    }
-
-   @PostMapping("/createEmploymentContact")
-    public ResponseEntity<String> createEmploymentContact(@RequestBody EmplymentContract emplymentContract, @RequestParam Long corpID, @RequestParam Long contactPersonID) {
-        String msg = "";
-        ContactPerson contactPerson = new ContactPerson(emplymentContract.getNameContactPerson());
-        System.out.println(emplymentContract.getNameContactPerson());
-        Employment employment = new Employment(emplymentContract.getEmailEmployment(), emplymentContract.getPhonenumberEmployment(),
-                emplymentContract.getPositionEmployment(), emplymentContract.getAddedToCorporationEmployment());
-        if (contactPerson.getName() != null) {
-            if (employment.getEmail() != null) {
-                createContactperson(contactPerson, corpID);
-                createEmployment(employment,corpID,contactPersonID);
-                msg = "Kontaktperson oprettet: " + contactPerson.getName();
+ /*  Json format for /updateContactPerson
+    { "corpID":1,
+    "name":"Kurt",
+    "addedToCorporation": "2022-12-10",
+    "movedFromCorporation":null,
+    "CPimage":"",
+    "phonenumber": 123,
+     "email": "m@d.dk",
+     "position":"overchef"}*/
+    @PutMapping("/updateContactPerson")
+    public ResponseEntity<Set<ContactPerson>> updateContactPerson(@RequestBody String Json, @RequestParam long contId) throws JsonProcessingException {
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(Json);
+        JsonNode idNode = rootNode.path("corpID");
+        Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
+        if (contactPerson_.isPresent() && (corporation_.isPresent())) {
+            ContactPerson contactPerson = contactPerson_.get();
+            JsonNode nameNode = rootNode.path("name");
+            contactPerson.setName(nameNode.asText());
+            contactPersonService.save(contactPerson);
+            Employment currentEmployment = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPerson);
+            if (currentEmployment != null) {
+                long employmentId = currentEmployment.getId();
+                Employment editedemployment = mapper.readValue(Json, Employment.class);
+                editedemployment.setId(employmentId);
+                editedemployment.setContactPerson(contactPerson);
+                editedemployment.setCorporation(corporation_.get());
+                employmentService.save(editedemployment);
+                System.out.println("Kontaktperson ændret");
             } else {
-                msg = "Fejl i oprettelsen af employment";
+                System.out.println("Fejl i redigering af kontaktperson");
+
             }
-        }else{
-            msg = "Fejl i oprettelsen af " + contactPerson.getName();
         }
-        return new ResponseEntity<>(msg, HttpStatus.OK);
+        return new ResponseEntity<>(getAll(), HttpStatus.OK);
+
+
     }
+}
 
-    @PostMapping("/createEmployment")
-    public ResponseEntity<String> createEmployment(@RequestBody Employment employment, @RequestParam Long corpID,@RequestParam Long contactPersonID) {
-        String msg = "";
-        if (employmentService.save(employment) != null) {
-            addCorpAndContactPersonToEmployment(employment.getId(), corpID, contactPersonID);
-            msg = "Employment oprettet";
-        } else {
-            msg = "Fejl i oprettelsen af Employment";
-        }
-        return new ResponseEntity<>(msg, HttpStatus.OK);
-    }
-
-    @PostMapping("/addCorpAndContactPersonToEmployment")
-    public ResponseEntity<String> addCorpAndContactPersonToEmployment(@RequestParam Long employmentId, @RequestParam Long corpID, @RequestParam Long contactID) {
-        Optional<Employment> employment_ = employmentService.findbyId(employmentId);
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
-        if (employment_.isPresent()) {
-            if (contactPerson_.isPresent()) {
-                if (corporation_.isPresent()) {
-                    Corporation corporation = corporation_.get();
-
-                    ContactPerson contactPerson = contactPerson_.get();
-
-                    Employment employment = employment_.get();
-
-                    employment.setContactPerson(contactPerson);
-
-                    employment.setCorporation(corporation);
-
-                    employmentService.save(employment);
-
-                    return new ResponseEntity<>("Tilføjet kontaktperson:" + contactPerson.getName() + " Til virksomhed: " + corporation.getName(), HttpStatus.OK);
-                }
-                return new ResponseEntity<>("Kunne ikke finde virksomhed med id: " + corpID, HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Kunne ikke finde kontaktperson med id: " + contactID, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Kunne ikke finde employment med id: " + employmentId, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteContactPerson")
-    public ResponseEntity<Map> deleteContactPerson(@RequestBody ContactPerson contactperson) {
-        System.out.println("deleteUser is called");
-
-        List<ContactPerson> userList = contactPersonService.findByName(contactperson.getName());
-        ContactPerson ContactPersonToDelete = userList.get(0);
-        contactPersonService.delete(ContactPersonToDelete);
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "user deleted, if found " + contactperson.getName());
-        return ResponseEntity.ok(map);
-    }*/
 
 
