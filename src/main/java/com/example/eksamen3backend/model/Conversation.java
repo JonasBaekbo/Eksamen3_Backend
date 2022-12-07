@@ -21,6 +21,7 @@ public class Conversation {
     private String subject;
     private String summary;
     private Date date;
+    private String employee;
 
     @ManyToOne
     @JoinColumn(name = "contactPerson_id")
