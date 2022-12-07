@@ -25,6 +25,9 @@ public class ContactPerson {
     @Column(name = "contactperson_name")
     private String name;
 
+    @Column(name="contactperson_status")
+    private int isActive;
+
 
     @OneToMany(mappedBy = "contactPerson")
     @JsonBackReference("contactPersonConversation")
