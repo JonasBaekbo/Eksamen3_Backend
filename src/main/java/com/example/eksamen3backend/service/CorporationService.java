@@ -49,4 +49,8 @@ public class CorporationService implements ICorporation {
     public List<Corporation> findByName(String name) {
         return corporationRepository.findByName(name);
     }
+    @Override
+    public List<Corporation> findByIsActive(Integer isActive){
+        return corporationRepository.findByIsActive(isActive);
+    }
 }

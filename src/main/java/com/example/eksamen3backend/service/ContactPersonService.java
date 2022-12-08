@@ -50,4 +50,8 @@ public class ContactPersonService implements IContactPerson {
     public List<ContactPerson> findByName(String name) {
         return contactPersonRepository.findByName(name);
     }
+    @Override
+    public List<ContactPerson> findByIsActive(int isActive){
+        return contactPersonRepository.findByIsActive(isActive);
+    }
 }

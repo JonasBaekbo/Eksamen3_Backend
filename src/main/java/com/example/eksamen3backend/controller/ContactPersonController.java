@@ -164,6 +164,10 @@ public class ContactPersonController {
         map.put("message", "Contactperson archived, if found " + updateEntity.getName());
         return ResponseEntity.ok(map);
     }
+    @GetMapping("/getArchivedContactPersons")
+    public List<ContactPerson> getArchivedContactPersons(){
+        return contactPersonService.findByIsActive(0);
+    }
 
 }
 

@@ -1,6 +1,5 @@
 package com.example.eksamen3backend.controller;
 
-import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
@@ -103,6 +102,10 @@ public class CorporationController {
         Map<String, String> map = new HashMap<>();
         map.put("message", "Corporation archived");
         return ResponseEntity.ok(map);
+    }
+    @GetMapping("/getArchivedCorporations")
+    public List<Corporation> getArchivedCorporations(){
+        return corporationService.findByIsActive(0);
     }
 }
 
