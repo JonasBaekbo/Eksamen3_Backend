@@ -20,14 +20,20 @@ public class CorporationController {
     @PostMapping("/createCorporation")
     public ResponseEntity<Set<Corporation>> createCorporation(@RequestBody Corporation corporation) {
 
-        corporation.setIsActive(1);
-        corporationService.save(corporation);
+        if(corporationService.findByName(corporation.getName()).isEmpty()) {
 
-        if (corporationService.save(corporation) != null) {
-            System.out.println("Virksomhed oprettet: " + corporation.getName());
-        } else {
-            System.out.println("Fejl i oprettelse af: " + corporation.getName());
+            corporation.setIsActive(1);
+            corporationService.save(corporation);
+
+            if (corporationService.save(corporation) != null) {
+                System.out.println("Virksomhed oprettet: " + corporation.getName());
+            } else {
+                System.out.println("Fejl i oprettelse af: " + corporation.getName());
+            }
+        }else{
+            System.out.println("Virksohed findes allreded: " + corporation.getName());
         }
+
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
     }
 
