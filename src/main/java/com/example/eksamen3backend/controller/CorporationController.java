@@ -31,7 +31,7 @@ public class CorporationController {
                 System.out.println("Fejl i oprettelse af: " + corporation.getName());
             }
         }else{
-            System.out.println("Virksohed findes allreded: " + corporation.getName());
+            System.out.println("Virksohed med dette name "+corporation.getName() + " findes allreded");
         }
 
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
@@ -70,28 +70,32 @@ public class CorporationController {
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
 
+            if (corporationService.findByName(updateEntity.getName()).isEmpty()) {
 
-            if (corporationToUpdate.getName() != null) {
-                corporationToUpdate.setName(updateEntity.getName());
+                if (corporationToUpdate.getName() != null) {
+                    corporationToUpdate.setName(updateEntity.getName());
+                }
+                if (corporationToUpdate.getCity() != null) {
+                    corporationToUpdate.setCity(updateEntity.getCity());
+                }
+                if (corporationToUpdate.getAddress() != null) {
+                    corporationToUpdate.setAddress(updateEntity.getAddress());
+                }
+                if (corporationToUpdate.getLogo() != null) {
+                    corporationToUpdate.setLogo(updateEntity.getLogo());
+                }
+                if (corporationToUpdate.getCountry() != null) {
+                    corporationToUpdate.setCountry(updateEntity.getCountry());
+                }
+                System.out.println(corporationToUpdate.getName());
+                corporationService.save(corporationToUpdate);
+            }else{
+                System.out.println("Virksohed med dette name " + updateEntity.getName() + " findes allreded");;
             }
-            if (corporationToUpdate.getCity() != null) {
-                corporationToUpdate.setCity(updateEntity.getCity());
-            }
-            if (corporationToUpdate.getAddress() != null) {
-                corporationToUpdate.setAddress(updateEntity.getAddress());
-            }
-            if (corporationToUpdate.getLogo() != null) {
-                corporationToUpdate.setLogo(updateEntity.getLogo());
-            }
-            if (corporationToUpdate.getCountry() != null) {
-                corporationToUpdate.setCountry(updateEntity.getCountry());
-            }
-            System.out.println(corporationToUpdate.getName());
-            corporationService.save(corporationToUpdate);
 
         }
         Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson updatet, if found " + updateEntity.getName());
+        map.put("message", "corporation updatet, if found " + updateEntity.getName());
         return ResponseEntity.ok(map);
     }
     @PutMapping("/archiveCorporation")
