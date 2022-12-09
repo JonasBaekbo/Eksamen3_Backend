@@ -1,22 +1,24 @@
 package com.example.eksamen3backend.model;
 
-import lombok.Data;
+
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @Getter
 @Setter
-@Data
+@Entity
 public class Image {
 
-    Integer id;
-    Long size;
-    String user;
-    String name;
-    String title;
-    String description;
-    String image;
-    Date created;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Lob()
+    @Column(name = "image")
+    private String image;
+
+    private Date created;
 }

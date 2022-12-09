@@ -27,8 +27,9 @@ public class Corporation {
     @Column(name = "corporation_address")
     private String address;
 
-    @Column(name = "corporation_logo")
-    private String logo;
+    //@Column(name = "corporation_logo")
+    @OneToOne
+    private Image logo;
 
     @Column(name ="corporation_city")
     private String city;
@@ -48,7 +49,7 @@ public class Corporation {
     @JsonBackReference("employments")
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "corporation_id", referencedColumnName = "id")
-    @Where(clause = "moved_from_corporation is null")
+    @Where(clause = "moved_from_corporation is null or moved_from_corporation > now()")
     private Set<Employment> employments = new HashSet<>();
 
     @JsonManagedReference

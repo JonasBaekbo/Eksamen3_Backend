@@ -1,7 +1,6 @@
 package com.example.eksamen3backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,6 +27,8 @@ public class ContactPerson {
     @Column(name="contactperson_status")
     private int isActive;
 
+    @OneToOne
+    private Image CPimage;
 
     @OneToMany(mappedBy = "contactPerson")
     @JsonBackReference("contactPersonConversation")

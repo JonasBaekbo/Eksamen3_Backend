@@ -1,41 +1,38 @@
 package com.example.eksamen3backend.controller;
 
 import com.example.eksamen3backend.model.Image;
+import com.example.eksamen3backend.service.ImageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-@CrossOrigin
+
 @RestController
-@RequestMapping("/api/v1/image")
 public class ImageController {
+ private ImageService imageService;
 
-    int counter;
-    List<Image> images;
-
-
-    public ImageController(){
-        images = new ArrayList<>();
-    }
-    @GetMapping
-    public ResponseEntity<List<Image>> findAll(){
-        return ResponseEntity.ok().body(images);
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
     }
 
-    @PostMapping()
+
+    @GetMapping("/getAllImage")
+    public ResponseEntity<Set<Image>> findAll(){
+        return ResponseEntity.ok(imageService.findall());
+    }
+
+    @PostMapping("/createImage")
     public ResponseEntity<Image> create(@RequestBody Image image){
-        image.setId(counter++);
         image.setCreated(new Date());
-        images.add(image);
+        imageService.save(image);
         return ResponseEntity.ok().body(image);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Image> delete(@PathVariable("id") Integer id){
-        Image deleteImage = images.stream().filter(element -> element.getId().equals(id)).findFirst().get();
-        images.remove(deleteImage);
-        return ResponseEntity.ok().body(deleteImage);
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Image> delete(@PathVariable("id") Integer id){
+//        Image deleteImage = images.stream().filter(element -> element.getId().equals(id)).findFirst().get();
+//        images.remove(deleteImage);
+//        return ResponseEntity.ok().body(deleteImage);
+//    }
 }

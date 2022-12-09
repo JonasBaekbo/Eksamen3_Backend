@@ -65,8 +65,6 @@ public class CorporationController {
     public ResponseEntity<Map> updateContactperson(@RequestBody Corporation updateEntity, @RequestParam long corpId) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
 
-//        List<Corporation> corpList = corporationService.findByName(updateEntity.getCorpName());
-//        Corporation corporationToUpdate = corpList.get(0);
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
 
@@ -98,6 +96,8 @@ public class CorporationController {
         map.put("message", "corporation updatet, if found " + updateEntity.getName());
         return ResponseEntity.ok(map);
     }
+
+    //ændre status på virksomhed fra 1=aktiv til 0=inaktiv
     @PutMapping("/archiveCorporation")
     public ResponseEntity<Map> archiveCorporation(@RequestParam long corpId) {
 

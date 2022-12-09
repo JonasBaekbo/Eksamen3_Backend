@@ -5,7 +5,6 @@ import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.model.Employment;
 import com.example.eksamen3backend.service.EmploymentService;
-import com.example.eksamen3backend.utilities.UpdateEntity;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -115,6 +114,7 @@ public class ContactPersonController {
         return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
     }
 
+//kan opdatere alle data på en kontaktperson og den nuværende ansættelse
     @PutMapping("/updateContactperson")
     public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson updateEntity, @RequestParam long contId) {
 
