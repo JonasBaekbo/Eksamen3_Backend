@@ -18,7 +18,7 @@ public class CorporationController {
     }
 
     @PostMapping("/createCorporation")
-    public ResponseEntity<Set<Corporation>> createCorporation(@RequestBody Corporation corporation) {
+    public ResponseEntity<List<Corporation>> createCorporation(@RequestBody Corporation corporation) {
 
         if(corporationService.findByName(corporation.getName()).isEmpty()) {
 
@@ -57,8 +57,8 @@ public class CorporationController {
 
 
     @GetMapping("/showCorporations")
-    public Set<Corporation> showAll() {
-        return corporationService.findall();
+    public List<Corporation> showAll() {
+        return corporationService.findByIsActive(1);
     }
 
     @PutMapping("/updateCorporation")

@@ -41,7 +41,7 @@ public class ContactPersonController {
     */
         // opretter ny contactPerson og ny employment og knytter de to sammen
         @PostMapping("/createContactPerson")
-        public ResponseEntity<Set<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+        public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(Json);
         JsonNode idNode = rootNode.path("corpID");
@@ -65,8 +65,8 @@ public class ContactPersonController {
 
 
     @GetMapping("/getAllContactPersons")
-    public Set<ContactPerson> getAll() {
-        return contactPersonService.findall();
+    public List<ContactPerson> getAll() {
+        return contactPersonService.findByIsActive(1);
     }
 
     //sætter en slutdato på en employment.
