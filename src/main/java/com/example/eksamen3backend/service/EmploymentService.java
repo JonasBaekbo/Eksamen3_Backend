@@ -39,7 +39,7 @@ public class EmploymentService implements IEmployment{
 
     @Override
     public void deleteByID(Long aLong) {
-employmentRepository.deleteById(aLong);
+    employmentRepository.deleteById(aLong);
     }
 
     @Override
