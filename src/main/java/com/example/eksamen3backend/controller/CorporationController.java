@@ -99,13 +99,13 @@ public class CorporationController {
         return ResponseEntity.ok(map);
     }
     @PutMapping("/archiveCorporation")
-    public ResponseEntity<Map> archiveCorporation(@RequestBody Corporation updateEntity, @RequestParam long corpId) {
+    public ResponseEntity<Map> archiveCorporation(@RequestParam long corpId) {
 
         Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
 
         if (corporation_.isPresent()) {
             Corporation corporationtoUpdate = corporation_.get();
-            corporationtoUpdate.setIsActive(updateEntity.getIsActive());
+            corporationtoUpdate.setIsActive(0);
 
             corporationService.save(corporationtoUpdate);
         }

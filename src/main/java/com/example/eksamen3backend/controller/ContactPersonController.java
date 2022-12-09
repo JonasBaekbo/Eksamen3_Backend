@@ -150,18 +150,18 @@ public class ContactPersonController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
     @PutMapping("/archiveContact")
-    public ResponseEntity<Map> archiveContact(@RequestBody ContactPerson updateEntity, @RequestParam long contId) {
+    public ResponseEntity<Map> archiveContact(@RequestParam long contId) {
 
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
-            contactPersonToUpdate.setIsActive(updateEntity.getIsActive());
+            contactPersonToUpdate.setIsActive(0);
 
             contactPersonService.save(contactPersonToUpdate);
         }
         Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson archived, if found " + updateEntity.getName());
+        map.put("message", "Contactperson archived, if found ");
         return ResponseEntity.ok(map);
     }
     @GetMapping("/getArchivedContactPersons")
