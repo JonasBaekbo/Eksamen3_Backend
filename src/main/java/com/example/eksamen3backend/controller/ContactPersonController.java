@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -156,9 +158,15 @@ public class ContactPersonController {
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
+            Employment employment_ = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
+
             contactPersonToUpdate.setIsActive(0);
 
+            employment_.setMovedFromCorporation(Timestamp.valueOf(LocalDateTime.now()));
+
             contactPersonService.save(contactPersonToUpdate);
+            employmentService.save(employment_);
+
         }
         Map<String, String> map = new HashMap<>();
         map.put("message", "Contactperson archived, if found ");

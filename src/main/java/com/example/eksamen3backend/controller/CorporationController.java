@@ -1,11 +1,15 @@
 package com.example.eksamen3backend.controller;
 
+import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
+import com.example.eksamen3backend.model.Employment;
 import com.example.eksamen3backend.service.CorporationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -113,6 +117,7 @@ public class CorporationController {
         map.put("message", "Corporation archived");
         return ResponseEntity.ok(map);
     }
+
     @GetMapping("/getArchivedCorporations")
     public List<Corporation> getArchivedCorporations(){
         return corporationService.findByIsActive(0);
