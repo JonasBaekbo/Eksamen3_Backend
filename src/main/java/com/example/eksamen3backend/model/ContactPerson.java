@@ -16,7 +16,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "contact_person")
-//@JsonIgnoreProperties(value = { "logo"})
 public class ContactPerson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +43,7 @@ public class ContactPerson {
     @JsonBackReference("employment")
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "contact_person_id", referencedColumnName = "id")
-    @Where(clause = "moved_from_corporation is null")
+    @Where(clause = "moved_from_corporation is null or moved_from_corporation > now()")
     private Set<Employment> employments = new HashSet<>();
 
     @JsonManagedReference

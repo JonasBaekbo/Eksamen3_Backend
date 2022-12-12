@@ -18,7 +18,7 @@ public class Photo {
 
     @Lob()
     @Column(name = "image")
-    private String image;
+    private String imageString;
 
     private Date created;
 
