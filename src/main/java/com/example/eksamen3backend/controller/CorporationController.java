@@ -3,7 +3,12 @@ package com.example.eksamen3backend.controller;
 import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.model.Employment;
+import com.example.eksamen3backend.model.Photo;
 import com.example.eksamen3backend.service.CorporationService;
+import com.example.eksamen3backend.service.PhotoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +21,31 @@ import java.util.*;
 public class CorporationController {
 
     private CorporationService corporationService;
+    private PhotoService photoService;
 
-    public CorporationController(CorporationService corporationService) {
+    public CorporationController(CorporationService corporationService, PhotoService photoService) {
         this.corporationService = corporationService;
+        this.photoService = photoService;
     }
 
     @PostMapping("/createCorporation")
-    public ResponseEntity<List<Corporation>> createCorporation(@RequestBody Corporation corporation) {
+    public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String corporationString) throws JsonProcessingException {
 
-        if(corporationService.findByName(corporation.getName()).isEmpty()) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(corporationString);
+        JsonNode nameNode=rootNode.path("name");
+        String corporationName=nameNode.asText();
 
+
+        if(corporationService.findByName(corporationName).isEmpty()) {
+            Corporation corporation = mapper.readValue(corporationString, Corporation.class);
+            JsonNode logoNode=rootNode.path("logo");
+            Photo logo =new Photo();
+            logo.setImage(logoNode.asText());
+            logo.setCreated(new Date());
+            photoService.save(logo);
             corporation.setIsActive(1);
+            corporation.setLogo(logo);
             corporationService.save(corporation);
 
             if (corporationService.save(corporation) != null) {
@@ -35,7 +54,7 @@ public class CorporationController {
                 System.out.println("Fejl i oprettelse af: " + corporation.getName());
             }
         }else{
-            System.out.println("Virksohed med dette name "+corporation.getName() + " findes allreded");
+            System.out.println("Virksohed med dette name "+corporationName + " findes allreded");
         }
 
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
@@ -83,7 +102,7 @@ public class CorporationController {
                 if (corporationToUpdate.getAddress() != null) {
                     corporationToUpdate.setAddress(updateEntity.getAddress());
                 }
-                if (corporationToUpdate.getLogo() != null) {
+               if (corporationToUpdate.getLogo() != null) {
                     corporationToUpdate.setLogo(updateEntity.getLogo());
                 }
                 if (corporationToUpdate.getCountry() != null) {

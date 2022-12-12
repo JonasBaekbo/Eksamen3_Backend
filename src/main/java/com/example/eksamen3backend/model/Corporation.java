@@ -2,6 +2,7 @@ package com.example.eksamen3backend.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "corporation")
+@JsonIgnoreProperties(value = { "logo"})
 public class Corporation {
 
     @Id
@@ -45,6 +47,16 @@ public class Corporation {
     private Set<Conversation> conversations = new HashSet<>();
 
 
+    @JsonManagedReference
+    public Photo CorporationLogo() {
+        if (this.logo != null) {
+            return this.logo;
+        } else {
+            return null;
+        }
+    }
+
+
     @OneToMany
     @JsonBackReference("employments")
     @EqualsAndHashCode.Exclude
@@ -55,5 +67,6 @@ public class Corporation {
     @JsonManagedReference
     public Set<Employment> currentEmployments() {
         return employments;
-    }
-}
+    }}
+
+
