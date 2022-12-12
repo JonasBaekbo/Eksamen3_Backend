@@ -15,7 +15,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "contact_person")
-//@JsonIgnoreProperties(value = {"addedToCorporation","movedFromCorporation","phonenumber","email", "position","corpID","CPimage"})
 public class ContactPerson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class ContactPerson {
     private int isActive;
 
     @OneToOne
-    private Image CPimage;
+    private Photo CPimage;
 
     @OneToMany(mappedBy = "contactPerson")
     @JsonBackReference("contactPersonConversation")

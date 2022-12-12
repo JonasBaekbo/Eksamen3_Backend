@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-public class Image {
+public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,9 @@ public class Image {
     private String image;
 
     private Date created;
+
+
+    public Photo() {
+
+    }
 }

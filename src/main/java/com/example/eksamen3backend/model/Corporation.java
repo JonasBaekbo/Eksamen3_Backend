@@ -29,7 +29,7 @@ public class Corporation {
 
     //@Column(name = "corporation_logo")
     @OneToOne
-    private Image logo;
+    private Photo logo;
 
     @Column(name ="corporation_city")
     private String city;

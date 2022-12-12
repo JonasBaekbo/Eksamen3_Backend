@@ -4,9 +4,11 @@ package com.example.eksamen3backend.controller;
 import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.model.Employment;
+import com.example.eksamen3backend.model.Photo;
 import com.example.eksamen3backend.service.EmploymentService;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
+import com.example.eksamen3backend.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 @RestController
 public class ContactPersonController {
@@ -24,22 +27,25 @@ public class ContactPersonController {
     private ContactPersonService contactPersonService;
     private CorporationService corporationService;
     private EmploymentService employmentService;
+    private PhotoService photoService;
 
-    public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService) {
+    public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService, PhotoService photoService) {
         this.contactPersonService = contactPersonService;
         this.corporationService = corporationService;
         this.employmentService = employmentService;
+        this.photoService = photoService;
     }
 
-        /* Json format for "/createContactPerson" :
-                  {"corpID":1,
-                  "name":"ole",
-                  "addedToCorporation": "2022-12-10",
-                  "movedFromCorporation":null,
-                  "phonenumber": 123,
-                  "email": "c@d.dk",
-                  "position":"sælger"}
-    */
+    /* Json format for "/createContactPerson" :
+                                  {"corpID":1,
+                                  "name":"ole",
+                                  "addedToCorporation": "2022-12-10",
+                                  "movedFromCorporation":null,
+                                  "CPimage:""
+                                  "phonenumber": 123,
+                                  "email": "c@d.dk",
+                                  "position":"sælger"}
+                    */
         // opretter ny contactPerson og ny employment og knytter de to sammen
         @PostMapping("/createContactPerson")
         public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
@@ -51,6 +57,12 @@ public class ContactPersonController {
         ContactPerson contactPerson= new ContactPerson();
         contactPerson.setName(nameNode.asText());
         contactPerson.setIsActive(1);
+        JsonNode imageNode=rootNode.path("CPimage");
+        Photo photo =new Photo();
+        photo.setImage(imageNode.asText());
+            photo.setCreated(new Date());
+      photoService.save(photo);
+        contactPerson.setCPimage(photo);
         contactPersonService.save(contactPerson);
         if ( (corporation_.isPresent())) {
             Employment employment = mapper.readValue(Json, Employment.class);
