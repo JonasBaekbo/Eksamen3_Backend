@@ -28,7 +28,6 @@ public class ContactPersonController {
     private CorporationService corporationService;
     private EmploymentService employmentService;
     private PhotoService photoService;
-    private ObjectMapper objectMapper=new ObjectMapper();
 
     public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService, PhotoService photoService) {
         this.contactPersonService = contactPersonService;
@@ -47,26 +46,26 @@ public class ContactPersonController {
                                   "email": "c@d.dk",
                                   "position":"sælger"}
                     */
-    // opretter ny contactPerson og ny employment og knytter de to sammen
-    @PostMapping("/createContactPerson")
-    public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(Json);
+        // opretter ny contactPerson og ny employment og knytter de to sammen
+        @PostMapping("/createContactPerson")
+        public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(Json);
         JsonNode idNode = rootNode.path("corpID");
         Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
-        JsonNode nameNode = rootNode.path("name");
-        ContactPerson contactPerson = new ContactPerson();
+        JsonNode nameNode=rootNode.path("name");
+        ContactPerson contactPerson= new ContactPerson();
         contactPerson.setName(nameNode.asText());
         contactPerson.setIsActive(1);
-        JsonNode imageNode = rootNode.path("CPimage");
-        Photo photo = new Photo();
+        JsonNode imageNode=rootNode.path("CPimage");
+        Photo photo =new Photo();
         photo.setImageString(imageNode.asText());
-        photo.setCreated(new Date());
-        photoService.save(photo);
+            photo.setCreated(new Date());
+      photoService.save(photo);
         contactPerson.setCPimage(photo);
         contactPersonService.save(contactPerson);
-        if ((corporation_.isPresent())) {
-            Employment employment = objectMapper.readValue(Json, Employment.class);
+        if ( (corporation_.isPresent())) {
+            Employment employment = mapper.readValue(Json, Employment.class);
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
             employmentService.save(employment);
@@ -85,10 +84,10 @@ public class ContactPersonController {
 
     //sætter en slutdato på en employment.
     @PutMapping("/setEndDateOnEmployment")
-    public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empId) {
+    public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empID) {
         Map<String, String> message = new HashMap<>();
 
-        Optional<Employment> employment_ = employmentService.findbyId(empId);
+        Optional<Employment> employment_ = employmentService.findbyId(empID);
         if (employment_.isPresent()) {
             Employment currentEmployment = employment_.get();
             currentEmployment.setMovedFromCorporation(employment.getMovedFromCorporation());
@@ -129,37 +128,23 @@ public class ContactPersonController {
         return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
     }
 
-
 //kan opdatere alle data på en kontaktperson og den nuværende ansættelse
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contId) throws JsonProcessingException {
+    public ResponseEntity<Map> updateContactperson(@RequestBody ContactPerson updateEntity, @RequestParam long contactID) {
 
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
 
         if (contactPerson_.isPresent()) {
-//            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(jsonString);
             ContactPerson contactPersonToUpdate = contactPerson_.get();
-            JsonNode nodeName = rootNode.path("name");
-            contactPersonToUpdate.setName(nodeName.asText());
-            Photo currentImage = contactPersonToUpdate.getCPimage();
-            JsonNode nodeImage = rootNode.path("CPimage");
-            currentImage.setImageString(nodeImage.asText());
-            currentImage.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-            photoService.save(currentImage);
+            contactPersonToUpdate.setName(updateEntity.getName());
+
             contactPersonService.save(contactPersonToUpdate);
         }
         Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson updatet, if found ");
+        map.put("message", "Contactperson updatet, if found " + updateEntity.getName());
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/findContactPersonContaining")
-    public ResponseEntity<List<ContactPerson>> findContactPersonContaining(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findAllByNameContaining(name);
-
-        return new ResponseEntity<>(contactPeople, HttpStatus.OK);
-    }
 
     @GetMapping("/findContactPersonByName")
     public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
@@ -170,19 +155,18 @@ public class ContactPersonController {
     }
 
     @GetMapping("/findContactPersonById")
-    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contId) {
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         if (contactPerson_.isPresent()) {
             ContactPerson contactPerson = contactPerson_.get();
             return new ResponseEntity<>(contactPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
-
     @PutMapping("/archiveContact")
-    public ResponseEntity<Map> archiveContact(@RequestParam long contId) {
+    public ResponseEntity<Map> archiveContact(@RequestParam long contactID) {
 
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
@@ -200,9 +184,8 @@ public class ContactPersonController {
         map.put("message", "Contactperson archived, if found ");
         return ResponseEntity.ok(map);
     }
-
     @GetMapping("/getArchivedContactPersons")
-    public List<ContactPerson> getArchivedContactPersons() {
+    public List<ContactPerson> getArchivedContactPersons(){
         return contactPersonService.findByIsActive(0);
     }
 
