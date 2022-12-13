@@ -37,8 +37,8 @@ public class HistoryController {
     //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette kan sorteres fra i visning af webside, eller i koden på et senere tidspunkt
     //samtaler sorteret på virksomhed
     @GetMapping("/conversationsByCorporation")
-    public ResponseEntity<Set<Conversation>> conversationsByCorporation(@RequestParam long corpID) {
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
+    public ResponseEntity<Set<Conversation>> conversationsByCorporation(@RequestParam long corpId) {
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
         if (corporation_.isPresent()) {
             Corporation corporation = corporation_.get();
             Set<Conversation> conversations = conversationService.getConversationsByCorporationOrderByDateDesc(corporation);
@@ -50,8 +50,8 @@ public class HistoryController {
     //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette kan sorteres fra i visning af webside, eller i koden på et senere tidspunkt
     //samtaler sorteret på kontaktperson
     @GetMapping("/conversationsByContactPerson")
-    public ResponseEntity<Set<Conversation>> conversationsByContactPerson(@RequestParam long contactID) {
-        Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactID);
+    public ResponseEntity<Set<Conversation>> conversationsByContactPerson(@RequestParam long contactPersonId) {
+        Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactPersonId);
         if (contactPerson_.isPresent()) {
             ContactPerson contactPerson=contactPerson_.get();
             Set<Conversation> conversations = conversationService.getConversationsByContactPersonOrderByDateDesc(contactPerson);
@@ -62,8 +62,8 @@ public class HistoryController {
 
     //ansættelseshistorik på en kontaktperson
     @GetMapping("/employmentHistory")
-    public ResponseEntity<Set<Employment>> employmentHistory(@RequestParam long contactID) {
-        Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactID);
+    public ResponseEntity<Set<Employment>> employmentHistory(@RequestParam long contactPersonId) {
+        Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactPersonId);
         if (contactPerson_.isPresent()) {
             ContactPerson contactPerson=contactPerson_.get();
             Set<Employment> employments =employmentService.findEmploymentsByContactPersonOrderByAddedToCorporationDesc(contactPerson) ;
