@@ -1,5 +1,6 @@
 package com.example.eksamen3backend.controller;
 
+import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.model.Photo;
 import com.example.eksamen3backend.service.CorporationService;
@@ -83,6 +84,13 @@ public class CorporationController {
         return corporationService.findByIsActive(1);
     }
 
+
+    @GetMapping("/findCorporationContaining")
+    public ResponseEntity<List<Corporation>> findCorporationContaining(@RequestParam String name) {
+        List<Corporation> corporations = corporationService.findAllByNameContaining(name);
+
+        return new ResponseEntity<>(corporations, HttpStatus.OK);
+    }
 
 
     @PutMapping("/updateCorporation")

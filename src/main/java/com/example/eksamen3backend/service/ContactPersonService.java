@@ -54,4 +54,9 @@ public class ContactPersonService implements IContactPerson {
     public List<ContactPerson> findByIsActive(int isActive){
         return contactPersonRepository.findByIsActive(isActive);
     }
+
+    @Override
+    public List<ContactPerson> findAllByNameContaining(String name) {
+        return contactPersonRepository.findAllByNameContaining(name);
+    }
 }

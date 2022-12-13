@@ -154,6 +154,12 @@ public class ContactPersonController {
         return ResponseEntity.ok(map);
     }
 
+    @GetMapping("/findContactPersonContaining")
+    public ResponseEntity<List<ContactPerson>> findContactPersonContaining(@RequestParam String name) {
+        List<ContactPerson> contactPeople = contactPersonService.findAllByNameContaining(name);
+
+        return new ResponseEntity<>(contactPeople, HttpStatus.OK);
+    }
 
     @GetMapping("/findContactPersonByName")
     public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
