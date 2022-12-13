@@ -1,6 +1,5 @@
 package com.example.eksamen3backend.controller;
 
-import com.example.eksamen3backend.model.ContactPerson;
 import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.model.Photo;
 import com.example.eksamen3backend.service.CorporationService;
@@ -29,16 +28,16 @@ public class CorporationController {
     }
 
     @PostMapping("/createCorporation")
-    public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String corporationString) throws JsonProcessingException {
+    public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String jsonString) throws JsonProcessingException {
 
 //        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(corporationString);
+        JsonNode rootNode = objectMapper.readTree(jsonString);
         JsonNode nameNode = rootNode.path("name");
         String corporationName = nameNode.asText();
 
 
         if (corporationService.findByName(corporationName).isEmpty()) {
-            Corporation corporation = objectMapper.readValue(corporationString, Corporation.class);
+            Corporation corporation = objectMapper.readValue(jsonString, Corporation.class);
             JsonNode logoNode = rootNode.path("logo");
             Photo logo = new Photo();
             logo.setImageString(logoNode.asText());
@@ -54,7 +53,7 @@ public class CorporationController {
                 System.out.println("Fejl i oprettelse af: " + corporation.getName());
             }
         } else {
-            System.out.println("Virksohed med dette name " + corporationName + " findes allreded");
+            System.out.println("Virksomhed med dette name " + corporationName + " findes allerede");
         }
 
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
@@ -69,8 +68,8 @@ public class CorporationController {
     }
 
     @GetMapping("/findCorporationById")
-    public ResponseEntity<Corporation> findContactPersonById(@RequestParam long corId) {
-        Optional<Corporation> corporation_ = corporationService.findbyId(corId);
+    public ResponseEntity<Corporation> findContactPersonById(@RequestParam long corpID) {
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
         if (corporation_.isPresent()) {
             Corporation corporation = corporation_.get();
             return new ResponseEntity<>(corporation, HttpStatus.OK);
@@ -94,9 +93,9 @@ public class CorporationController {
 
 
     @PutMapping("/updateCorporation")
-    public ResponseEntity<Map> updateCorporation(@RequestBody String jsonString, @RequestParam long corpId) throws JsonProcessingException {
+    public ResponseEntity<Map> updateCorporation(@RequestBody String jsonString, @RequestParam long corpID) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
 
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
@@ -136,15 +135,15 @@ public class CorporationController {
 
     //ændre status på virksomhed fra 1=aktiv til 0=inaktiv
     @PutMapping("/archiveCorporation")
-    public ResponseEntity<Map> archiveCorporation(@RequestParam long corpId) {
+    public ResponseEntity<Map> archiveCorporation(@RequestParam long corpID) {
 
-        Optional<Corporation> corporation_ = corporationService.findbyId(corpId);
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
 
         if (corporation_.isPresent()) {
-            Corporation corporationtoUpdate = corporation_.get();
-            corporationtoUpdate.setIsActive(0);
+            Corporation corporationToUpdate = corporation_.get();
+            corporationToUpdate.setIsActive(0);
 
-            corporationService.save(corporationtoUpdate);
+            corporationService.save(corporationToUpdate);
         }
         Map<String, String> map = new HashMap<>();
         map.put("message", "Corporation archived");

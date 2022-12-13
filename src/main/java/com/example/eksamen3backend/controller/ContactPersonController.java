@@ -49,9 +49,9 @@ public class ContactPersonController {
                     */
     // opretter ny contactPerson og ny employment og knytter de to sammen
     @PostMapping("/createContactPerson")
-    public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String Json) throws JsonProcessingException {
+    public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String jsonString) throws JsonProcessingException {
 //        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(Json);
+        JsonNode rootNode = objectMapper.readTree(jsonString);
         JsonNode idNode = rootNode.path("corpID");
         Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
         JsonNode nameNode = rootNode.path("name");
@@ -66,7 +66,7 @@ public class ContactPersonController {
         contactPerson.setCPimage(photo);
         contactPersonService.save(contactPerson);
         if ((corporation_.isPresent())) {
-            Employment employment = objectMapper.readValue(Json, Employment.class);
+            Employment employment = objectMapper.readValue(jsonString, Employment.class);
             employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
             employmentService.save(employment);
@@ -85,10 +85,10 @@ public class ContactPersonController {
 
     //sætter en slutdato på en employment.
     @PutMapping("/setEndDateOnEmployment")
-    public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empId) {
+    public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empID) {
         Map<String, String> message = new HashMap<>();
 
-        Optional<Employment> employment_ = employmentService.findbyId(empId);
+        Optional<Employment> employment_ = employmentService.findbyId(empID);
         if (employment_.isPresent()) {
             Employment currentEmployment = employment_.get();
             currentEmployment.setMovedFromCorporation(employment.getMovedFromCorporation());
@@ -132,9 +132,9 @@ public class ContactPersonController {
 
 //kan opdatere alle data på en kontaktperson og den nuværende ansættelse
     @PutMapping("/updateContactperson")
-    public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contId) throws JsonProcessingException {
+    public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contactID) throws JsonProcessingException {
 
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
 
         if (contactPerson_.isPresent()) {
 //            ObjectMapper objectMapper = new ObjectMapper();
@@ -170,8 +170,8 @@ public class ContactPersonController {
     }
 
     @GetMapping("/findContactPersonById")
-    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contId) {
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         if (contactPerson_.isPresent()) {
             ContactPerson contactPerson = contactPerson_.get();
             return new ResponseEntity<>(contactPerson, HttpStatus.OK);
@@ -180,9 +180,9 @@ public class ContactPersonController {
     }
 
     @PutMapping("/archiveContact")
-    public ResponseEntity<Map> archiveContact(@RequestParam long contId) {
+    public ResponseEntity<Map> archiveContact(@RequestParam long contactID) {
 
-        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contId);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
