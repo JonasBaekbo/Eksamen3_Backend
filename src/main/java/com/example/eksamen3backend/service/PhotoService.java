@@ -5,6 +5,9 @@ import com.example.eksamen3backend.repository.PhotoRepository;
 import com.example.eksamen3backend.service.IPhoto;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +29,7 @@ public class PhotoService implements IPhoto {
 
     @Override
     public Photo save(Photo object) {
-       return  photoRepository.save(object);
+        return photoRepository.save(object);
     }
 
     @Override
@@ -42,8 +45,14 @@ public class PhotoService implements IPhoto {
 
     @Override
     public Optional<Photo> findbyId(Long aLong) {
+        return photoRepository.findById(aLong);
+    }
 
-            return photoRepository.findById(aLong);
-
+    public Photo createPhoto(String imageAsString){
+        Photo photo = new Photo();
+        photo.setImageString(imageAsString);
+        photo.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        photoRepository.save(photo);
+        return photo;
     }
 }

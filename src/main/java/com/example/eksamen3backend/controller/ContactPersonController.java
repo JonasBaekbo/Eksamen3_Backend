@@ -28,7 +28,7 @@ public class ContactPersonController {
     private CorporationService corporationService;
     private EmploymentService employmentService;
     private PhotoService photoService;
-    private ObjectMapper objectMapper=new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService, PhotoService photoService) {
         this.contactPersonService = contactPersonService;
@@ -58,17 +58,19 @@ public class ContactPersonController {
         contactPerson.setName(nameNode.asText());
         contactPerson.setIsActive(1);
         JsonNode imageNode = rootNode.path("CPimage");
-        Photo photo = new Photo();
+        /*Photo photo = new Photo();
         photo.setImageString(imageNode.asText());
         photo.setCreated(new Date());
-        photoService.save(photo);
+        photoService.save(photo);*/
+        Photo photo=photoService.createPhoto(imageNode.asText());
         contactPerson.setCPimage(photo);
         contactPersonService.save(contactPerson);
         if ((corporation_.isPresent())) {
             Employment employment = objectMapper.readValue(jsonString, Employment.class);
-            employment.setContactPerson(contactPerson);
+            employmentService.makeEmployment(contactPerson,corporation_.get(),employment);
+           /* employment.setContactPerson(contactPerson);
             employment.setCorporation(corporation_.get());
-            employmentService.save(employment);
+            employmentService.save(employment);*/
             System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
         } else {
             System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
@@ -81,7 +83,7 @@ public class ContactPersonController {
     public List<ContactPerson> getAll() {
         return contactPersonService.findByIsActive(1);
     }
-
+/*
     //sætter en slutdato på en employment.
     @PutMapping("/setEndDateOnEmployment")
     public ResponseEntity<Map> setEndDateOnEmployment(@RequestBody Employment employment, @RequestParam Long empID) {
@@ -100,7 +102,8 @@ public class ContactPersonController {
             message.put("message", "no employment was found");
         }
         return ResponseEntity.ok(message);
-    }
+    }*/
+/*
 
     // laver ny employment på en kontaktperson, og afslutter den nuværende employment hvis der er en.
     @PostMapping("/makeNewEmployment")
@@ -128,7 +131,9 @@ public class ContactPersonController {
         return new ResponseEntity<>("Kunne ikke oprette forbindelse mellem virksomhed og medarbejder", HttpStatus.OK);
     }
 
+*/
 
+/*
 //kan opdatere alle data på en kontaktperson og den nuværende ansættelse
     @PutMapping("/updateContactperson")
     public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contactID) throws JsonProcessingException {
@@ -156,66 +161,175 @@ public class ContactPersonController {
         map.put("message", "Contactperson updatet, if found ");
         return ResponseEntity.ok(map);
     }
+*/
 
-    @GetMapping("/findActiveContactPersonContaining")
-    public ResponseEntity<List<ContactPerson>> findActiveContactPersonContaining(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(1,name);
 
-        return new ResponseEntity<>(contactPeople, HttpStatus.OK);
-    }
-
-    @GetMapping("/findInactiveContactPersonContaining")
-    public ResponseEntity<List<ContactPerson>> findInactiveContactPersonContaining(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(0,name);
-
-        return new ResponseEntity<>(contactPeople, HttpStatus.OK);
-    }
-
-    @GetMapping("/findContactPersonByName")
-    public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findByName(name);
-        ContactPerson contactPerson = contactPeople.get(0);
-
-        return new ResponseEntity<>(contactPerson, HttpStatus.OK);
-    }
-
-    @GetMapping("/findContactPersonById")
-    public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {
+    /*//kan opdatere alle data på en kontaktperson og den nuværende ansættelse
+    @PutMapping("/updateContactperson")
+    public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contactID) throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+        JsonNode rootNode = objectMapper.readTree(jsonString);
+        JsonNode corpIDNode = rootNode.path("corpID");
+        Optional<Corporation> corporation_ = corporationService.findbyId(corpIDNode.asLong());
+
         if (contactPerson_.isPresent()) {
-            ContactPerson contactPerson = contactPerson_.get();
-            return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+
+            ContactPerson contactPersonToUpdate = contactPerson_.get();
+            JsonNode nodeName = rootNode.path("name");
+            contactPersonToUpdate.setName(nodeName.asText());
+
+            Photo currentImage = contactPersonToUpdate.getCPimage();
+            JsonNode nodeImage = rootNode.path("CPimage");
+            String nodeImageAsString = nodeImage.asText();
+
+            if (!(nodeImageAsString.equals("null") || nodeImageAsString.isEmpty() || currentImage.getImageString().equals(nodeImageAsString))) {
+                currentImage.setImageString(nodeImageAsString);
+                currentImage.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+                photoService.save(currentImage);
+            }
+
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        if (corporation_.isPresent()) {
+            Employment employment = objectMapper.readValue(jsonString, Employment.class);
+            Corporation corporation = corporation_.get();
+            ContactPerson contactPersonToUpdate = contactPerson_.get();
+            //tjekker om der ligger en aktiv employment på kontaktpersonen, hvis der findes en, sættes den til at slutte når den næste starter
+            Optional<Employment> currentEmployment_= Optional.ofNullable(employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate));
+            if (currentEmployment_.isEmpty()) {
+                employment.setCorporation(corporation);
+                employment.setContactPerson(contactPersonToUpdate);
+
+                employmentService.save(employment);
+            } else if (currentEmployment_.get().getCorporation().getId() != corporation.getId()&&currentEmployment_.isPresent()) {
+                currentEmployment_.get().setMovedFromCorporation(employment.getAddedToCorporation());
+                employmentService.save(currentEmployment_.get());
+                employment.setCorporation(corporation);
+                employment.setContactPerson(contactPersonToUpdate);
+                employmentService.save(employment);
+            } else {
+                employment.setId(currentEmployment_.get().getId());
+                employment.setCorporation(corporation);
+                employment.setContactPerson(contactPersonToUpdate);
+                employmentService.save(employment);
+            }
+            contactPersonService.save(contactPersonToUpdate);
+
+
+            map.put("message", "OPdaterede kontaktperson:" + contactPersonToUpdate.getName() + " Til virksomhed: ");
+        } else {
+            map.put("message", "Kunne ikke oprette forbindelse mellem virksomhed og medarbejder");
+        }
+        return ResponseEntity.ok(map);
     }
-
-    @PutMapping("/archiveContact")
-    public ResponseEntity<Map> archiveContact(@RequestParam long contactID) {
-
+*/
+    //kan opdatere alle data på en kontaktperson, samt oprette ny employment, his corpID ændre sig
+    @PutMapping("/updateContactperson")
+    public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contactID) throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+        JsonNode rootNode = objectMapper.readTree(jsonString);
 
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
-            Employment employment_ = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
+            JsonNode nodeName = rootNode.path("name");
+            contactPersonToUpdate.setName(nodeName.asText());
 
-            contactPersonToUpdate.setIsActive(0);
+            Photo currentImage = contactPersonToUpdate.getCPimage();
+            JsonNode nodeImage = rootNode.path("CPimage");
+            String nodeImageAsString = nodeImage.asText();
 
-            employment_.setMovedFromCorporation(Timestamp.valueOf(LocalDateTime.now()));
+            //TODO: er dette korrekt sat op, eller er den gal med logikken?
+            if (!(nodeImageAsString.equals("null") || nodeImageAsString.isEmpty() || currentImage.getImageString().equals(nodeImageAsString))) {
+                /*currentImage.setImageString(nodeImageAsString);
+                currentImage.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+                photoService.save(currentImage);*/
+                photoService.createPhoto(nodeImageAsString);
+            }
 
-            contactPersonService.save(contactPersonToUpdate);
-            employmentService.save(employment_);
+            JsonNode corpIDNode = rootNode.path("corpID");
+            Optional<Corporation> corporation_ = corporationService.findbyId(corpIDNode.asLong());
 
+            if (corporation_.isPresent()) {
+                Employment employment = objectMapper.readValue(jsonString, Employment.class);
+                Corporation corporation = corporation_.get();
+
+                Optional<Employment> currentEmployment_ = Optional.ofNullable(employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate));
+                if (currentEmployment_.isPresent()) {
+                    employmentService.editEmployment(currentEmployment_.get(), employment, corporation);
+                } else {
+                    employmentService.makeEmployment(contactPersonToUpdate, corporation, employment);
+                }
+                contactPersonService.save(contactPersonToUpdate);
+
+                map.put("message", "Opdaterede kontaktperson:" + contactPersonToUpdate.getName());
+            } else {
+                map.put("message", "Kunne ikke oprette forbindelse mellem virksomhed og medarbejder");
+            }
+
+        }return ResponseEntity.ok(map);
+
+    }
+        @GetMapping("/findActiveContactPersonContaining")
+        public ResponseEntity<List<ContactPerson>> findActiveContactPersonContaining (@RequestParam String name){
+            List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(1, name);
+
+            return new ResponseEntity<>(contactPeople, HttpStatus.OK);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson archived, if found ");
-        return ResponseEntity.ok(map);
-    }
 
-    @GetMapping("/getArchivedContactPersons")
-    public List<ContactPerson> getArchivedContactPersons() {
-        return contactPersonService.findByIsActive(0);
-    }
+        @GetMapping("/findInactiveContactPersonContaining")
+        public ResponseEntity<List<ContactPerson>> findInactiveContactPersonContaining (@RequestParam String name){
+            List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(0, name);
 
-}
+            return new ResponseEntity<>(contactPeople, HttpStatus.OK);
+        }
+
+        @GetMapping("/findContactPersonByName")
+        public ResponseEntity<ContactPerson> findContactPersonByName (@RequestParam String name){
+            List<ContactPerson> contactPeople = contactPersonService.findByName(name);
+            ContactPerson contactPerson = contactPeople.get(0);
+
+            return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+        }
+
+        @GetMapping("/findContactPersonById")
+        public ResponseEntity<ContactPerson> findContactPersonById ( @RequestParam long contactID){
+            Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+            if (contactPerson_.isPresent()) {
+                ContactPerson contactPerson = contactPerson_.get();
+                return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        @PutMapping("/archiveContact")
+        public ResponseEntity<Map> archiveContact ( @RequestParam long contactID){
+
+            Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
+
+            if (contactPerson_.isPresent()) {
+                ContactPerson contactPersonToUpdate = contactPerson_.get();
+                Employment employment_ = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
+
+                contactPersonToUpdate.setIsActive(0);
+
+                employment_.setMovedFromCorporation(Timestamp.valueOf(LocalDateTime.now()));
+
+                contactPersonService.save(contactPersonToUpdate);
+                employmentService.save(employment_);
+
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "Contactperson archived, if found ");
+            return ResponseEntity.ok(map);
+        }
+
+        @GetMapping("/getArchivedContactPersons")
+        public List<ContactPerson> getArchivedContactPersons () {
+            return contactPersonService.findByIsActive(0);
+        }
+
+    }
 
 

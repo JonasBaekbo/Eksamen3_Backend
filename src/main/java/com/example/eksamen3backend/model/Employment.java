@@ -6,10 +6,16 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 
 @Getter
@@ -55,7 +61,7 @@ public class Employment {
         this.position = positionEmployment;
         this.addedToCorporation = addedToCorporationEmployment;
     }
-
+    @JsonManagedReference
     public String getContactPersonName() {
         if (this.contactPerson != null) {
             return this.contactPerson.getName();
@@ -64,7 +70,7 @@ public class Employment {
         }
     }
 
-
+    @JsonManagedReference
     public String getCorporationName() {
         if (this.corporation != null) {
             return this.corporation.getName();
@@ -77,5 +83,8 @@ public class Employment {
     public long getContactPersonID() {
         return this.contactPerson.getId();
     }
+
+
+
 
 }

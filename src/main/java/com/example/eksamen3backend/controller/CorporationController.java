@@ -38,10 +38,11 @@ public class CorporationController {
         if (corporationService.findByName(corporationName).isEmpty()) {
             Corporation corporation = objectMapper.readValue(jsonString, Corporation.class);
             JsonNode logoNode = rootNode.path("logo");
-            Photo logo = new Photo();
+            Photo logo=photoService.createPhoto(logoNode.asText());
+            /*Photo logo = new Photo();
             logo.setImageString(logoNode.asText());
             logo.setCreated(new Date());
-            photoService.save(logo);
+            photoService.save(logo);*/
             corporation.setIsActive(1);
             corporation.setLogo(logo);
             corporationService.save(corporation);
@@ -114,10 +115,13 @@ public class CorporationController {
                 JsonNode nodeLogo = rootNode.path("logo");
                 String nodeLogoAsString = nodeLogo.asText();
                 Photo currentLogo = corporationToUpdate.getLogo();
+                //TODO: tjek logik på denne
                 if (!(nodeLogoAsString.equals("null") || nodeLogoAsString.isEmpty() || currentLogo.getImageString().equals(nodeLogoAsString))) {
-                    currentLogo.setImageString(nodeLogoAsString);
+                    /*currentLogo.setImageString(nodeLogoAsString);
                     currentLogo.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-                    photoService.save(currentLogo);
+                    photoService.save(currentLogo);*/
+                    currentLogo=photoService.createPhoto(nodeLogoAsString);
+
                 }
                 newCorporationInfo.setLogo(currentLogo);
                 newCorporationInfo.setId(corporationToUpdate.getId());
