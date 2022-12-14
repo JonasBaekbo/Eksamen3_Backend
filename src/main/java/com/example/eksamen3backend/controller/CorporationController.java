@@ -39,10 +39,6 @@ public class CorporationController {
             Corporation corporation = objectMapper.readValue(jsonString, Corporation.class);
             JsonNode logoNode = rootNode.path("logo");
             Photo logo=photoService.createPhoto(logoNode.asText());
-            /*Photo logo = new Photo();
-            logo.setImageString(logoNode.asText());
-            logo.setCreated(new Date());
-            photoService.save(logo);*/
             corporation.setIsActive(1);
             corporation.setLogo(logo);
             corporationService.save(corporation);
@@ -115,11 +111,8 @@ public class CorporationController {
                 JsonNode nodeLogo = rootNode.path("logo");
                 String nodeLogoAsString = nodeLogo.asText();
                 Photo currentLogo = corporationToUpdate.getLogo();
-                //TODO: tjek logik på denne
+                //Ændre logo hvis der er uploadet et nyt
                 if (!(nodeLogoAsString.equals("null") || nodeLogoAsString.isEmpty() || currentLogo.getImageString().equals(nodeLogoAsString))) {
-                    /*currentLogo.setImageString(nodeLogoAsString);
-                    currentLogo.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-                    photoService.save(currentLogo);*/
                     currentLogo=photoService.createPhoto(nodeLogoAsString);
 
                 }
@@ -132,14 +125,11 @@ public class CorporationController {
             } else if (!corporationService.findByName(updateName).isEmpty()) {
                 map.put("message", "Virksomhed med dette name " + updateName + " findes allerede ");
                 return ResponseEntity.ok(map);
-
             }
         }
-
         map.put("message", "corporation updatet, if found ");
         return ResponseEntity.ok(map);
     }
-
 
     //ændre status på virksomhed fra 1=aktiv til 0=inaktiv
     @PutMapping("/archiveCorporation")
