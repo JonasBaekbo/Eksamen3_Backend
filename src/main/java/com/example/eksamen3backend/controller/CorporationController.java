@@ -110,7 +110,7 @@ public class CorporationController {
                 JsonNode nodeLogo = rootNode.path("logo");
                 String nodeLogoAsString = nodeLogo.asText();
                 Photo currentLogo = corporationToUpdate.getLogo();
-                if (!currentLogo.getImageString().equals(nodeLogoAsString)|| currentLogo == null) {
+                if (!(nodeLogoAsString.equals("null") || nodeLogoAsString.isEmpty() || currentLogo.getImageString().equals(nodeLogoAsString))) {
                     currentLogo.setImageString(nodeLogoAsString);
                     currentLogo.setCreated(Timestamp.valueOf(LocalDateTime.now()));
                     photoService.save(currentLogo);

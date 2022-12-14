@@ -50,6 +50,4 @@ public class ContactPerson {
     public Set<Employment> currentEmployments() {
         return employments;
     }
-
-
 }

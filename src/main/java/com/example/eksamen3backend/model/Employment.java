@@ -2,6 +2,7 @@ package com.example.eksamen3backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,6 +71,11 @@ public class Employment {
         } else {
             return null;
         }
+    }
+
+    @JsonManagedReference
+    public long getContactPersonID() {
+        return this.contactPerson.getId();
     }
 
 }
