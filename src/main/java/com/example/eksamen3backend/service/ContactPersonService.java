@@ -59,4 +59,10 @@ public class ContactPersonService implements IContactPerson {
     public List<ContactPerson> findAllByNameContaining(String name) {
         return contactPersonRepository.findAllByNameContaining(name);
     }
+
+    @Override
+    public List<ContactPerson> findByIsActiveAndNameContainingOrderByNameAsc(int isActive,String name) {
+        return contactPersonRepository.findByIsActiveAndNameContainingOrderByNameAsc( isActive,name);
+    }
+
 }

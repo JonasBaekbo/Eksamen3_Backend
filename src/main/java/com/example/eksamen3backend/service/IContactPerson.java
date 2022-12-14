@@ -11,4 +11,6 @@ public interface IContactPerson extends CrudService<ContactPerson, Long> {
     List<ContactPerson> findByIsActive(int isActive);
 
     List<ContactPerson> findAllByNameContaining(String name);
+
+    List<ContactPerson> findByIsActiveAndNameContainingOrderByNameAsc(int isActive,String name);
 }

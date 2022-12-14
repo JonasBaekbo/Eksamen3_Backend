@@ -157,9 +157,16 @@ public class ContactPersonController {
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/findContactPersonContaining")
-    public ResponseEntity<List<ContactPerson>> findContactPersonContaining(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findAllByNameContaining(name);
+    @GetMapping("/findActiveContactPersonContaining")
+    public ResponseEntity<List<ContactPerson>> findActiveContactPersonContaining(@RequestParam String name) {
+        List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(1,name);
+
+        return new ResponseEntity<>(contactPeople, HttpStatus.OK);
+    }
+
+    @GetMapping("/findInactiveContactPersonContaining")
+    public ResponseEntity<List<ContactPerson>> findInactiveContactPersonContaining(@RequestParam String name) {
+        List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(0,name);
 
         return new ResponseEntity<>(contactPeople, HttpStatus.OK);
     }

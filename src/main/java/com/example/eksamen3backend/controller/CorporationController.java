@@ -83,9 +83,15 @@ public class CorporationController {
     }
 
 
-    @GetMapping("/findCorporationContaining")
-    public ResponseEntity<List<Corporation>> findCorporationContaining(@RequestParam String name) {
-        List<Corporation> corporations = corporationService.findAllByNameContaining(name);
+    @GetMapping("/findActiveCorporationContaining")
+    public ResponseEntity<List<Corporation>> findActiveCorporationContaining(@RequestParam String name) {
+        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(1,name);
+
+        return new ResponseEntity<>(corporations, HttpStatus.OK);
+    }
+    @GetMapping("/findInactiveCorporationContaining")
+    public ResponseEntity<List<Corporation>> findInactiveCorporationContaining(@RequestParam String name) {
+        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(0,name);
 
         return new ResponseEntity<>(corporations, HttpStatus.OK);
     }
