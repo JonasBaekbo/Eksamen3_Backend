@@ -55,6 +55,11 @@ public class CorporationService implements ICorporation {
     }
 
     @Override
+    public List<Corporation> findByIsActiveOrderByNameAsc(int isActive) {
+        return corporationRepository.findByIsActiveOrderByNameAsc(isActive);
+    }
+
+    @Override
     public List<Corporation> findAllByNameContaining(String name) {
         return  corporationRepository.findAllByNameContaining(name);
     }

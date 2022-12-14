@@ -12,6 +12,7 @@ public interface CorporationRepository extends JpaRepository<Corporation, Long> 
     List<Corporation> findByName(String name);
 
     List<Corporation> findByIsActive(Integer isActive);
+    List<Corporation> findByIsActiveOrderByNameAsc(int isActive);
 
     List<Corporation> findAllByNameContaining(String name);
     List<Corporation> findByIsActiveAndNameContainingOrderByNameAsc(int isActive,String name);

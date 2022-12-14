@@ -12,6 +12,8 @@ public interface ICorporation extends CrudService<Corporation, Long> {
     List<Corporation> findByName(String name);
 
     List<Corporation> findByIsActive(Integer isActive);
+
+    List<Corporation> findByIsActiveOrderByNameAsc(int isActive);
     List<Corporation> findAllByNameContaining(String name);
     List<Corporation> findByIsActiveAndNameContainingOrderByNameAsc(int isActive, String name);
 }

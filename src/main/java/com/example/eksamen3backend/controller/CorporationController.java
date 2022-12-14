@@ -76,7 +76,7 @@ public class CorporationController {
 
     @GetMapping("/showCorporations")
     public List<Corporation> showAll() {
-        return corporationService.findByIsActive(1);
+        return corporationService.findByIsActiveOrderByNameAsc(1);
     }
 
 
@@ -150,7 +150,7 @@ public class CorporationController {
 
     @GetMapping("/getArchivedCorporations")
     public List<Corporation> getArchivedCorporations() {
-        return corporationService.findByIsActive(0);
+        return corporationService.findByIsActiveOrderByNameAsc(0);
     }
 }
 

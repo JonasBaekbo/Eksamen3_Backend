@@ -74,7 +74,7 @@ public class ContactPersonController {
 
     @GetMapping("/getAllContactPersons")
     public List<ContactPerson> getAll() {
-        return contactPersonService.findByIsActive(1);
+        return contactPersonService.findByIsActiveOrderByNameAsc(1);
     }
 
 
@@ -173,7 +173,7 @@ public class ContactPersonController {
 
     @GetMapping("/getArchivedContactPersons")
     public List<ContactPerson> getArchivedContactPersons() {
-        return contactPersonService.findByIsActive(0);
+        return contactPersonService.findByIsActiveOrderByNameAsc(0);
     }
 
 }

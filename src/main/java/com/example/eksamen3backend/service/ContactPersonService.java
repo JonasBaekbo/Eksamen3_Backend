@@ -56,6 +56,11 @@ public class ContactPersonService implements IContactPerson {
     }
 
     @Override
+    public List<ContactPerson> findByIsActiveOrderByNameAsc(int isActive) {
+        return contactPersonRepository.findByIsActiveOrderByNameAsc(isActive);
+    }
+
+    @Override
     public List<ContactPerson> findAllByNameContaining(String name) {
         return contactPersonRepository.findAllByNameContaining(name);
     }
