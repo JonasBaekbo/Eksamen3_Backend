@@ -50,7 +50,6 @@ public class ContactPersonController {
     // opretter ny contactPerson og ny employment og knytter de to sammen
     @PostMapping("/createContactPerson")
     public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String jsonString) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(jsonString);
         JsonNode idNode = rootNode.path("corpID");
         Optional<Corporation> corporation_ = corporationService.findbyId(idNode.asLong());
@@ -137,16 +136,20 @@ public class ContactPersonController {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
 
         if (contactPerson_.isPresent()) {
-//            ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(jsonString);
             ContactPerson contactPersonToUpdate = contactPerson_.get();
             JsonNode nodeName = rootNode.path("name");
             contactPersonToUpdate.setName(nodeName.asText());
+
             Photo currentImage = contactPersonToUpdate.getCPimage();
             JsonNode nodeImage = rootNode.path("CPimage");
-            currentImage.setImageString(nodeImage.asText());
-            currentImage.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-            photoService.save(currentImage);
+            String nodeImageAsString =nodeImage.asText();
+
+            if (!(nodeImageAsString.equals("null") || nodeImageAsString.isEmpty() || currentImage.getImageString().equals(nodeImageAsString))) {
+                currentImage.setImageString(nodeImageAsString);
+                currentImage.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+                photoService.save(currentImage);
+            }
             contactPersonService.save(contactPersonToUpdate);
         }
         Map<String, String> map = new HashMap<>();

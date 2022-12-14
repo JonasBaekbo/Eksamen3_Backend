@@ -30,7 +30,6 @@ public class CorporationController {
     @PostMapping("/createCorporation")
     public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String jsonString) throws JsonProcessingException {
 
-//        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(jsonString);
         JsonNode nameNode = rootNode.path("name");
         String corporationName = nameNode.asText();
@@ -99,7 +98,6 @@ public class CorporationController {
 
         if (corporation_.isPresent()) {
             Corporation corporationToUpdate = corporation_.get();
-//            ObjectMapper objectMapper = new ObjectMapper();
 
             JsonNode rootNode = objectMapper.readTree(jsonString);
             JsonNode nodeName = rootNode.path("name");
