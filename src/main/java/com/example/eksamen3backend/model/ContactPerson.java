@@ -50,4 +50,17 @@ public class ContactPerson {
     public Set<Employment> currentEmployments() {
         return employments;
     }
+
+    @OneToMany
+    @JsonBackReference("employmentHistory")
+    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "contact_person_id", referencedColumnName = "id")
+    @OrderBy("movedFromCorporation DESC")
+    private Set<Employment> employmentHistory1 = new HashSet<>();
+
+    @JsonManagedReference
+    public Set<Employment> employmentHistory() {
+        return employmentHistory1;
+    }
+
 }

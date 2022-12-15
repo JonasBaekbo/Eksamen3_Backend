@@ -61,7 +61,7 @@ public class Employment {
         this.position = positionEmployment;
         this.addedToCorporation = addedToCorporationEmployment;
     }
-    @JsonManagedReference
+    @JsonManagedReference("getContactPersonName")
     public String getContactPersonName() {
         if (this.contactPerson != null) {
             return this.contactPerson.getName();
@@ -70,7 +70,7 @@ public class Employment {
         }
     }
 
-    @JsonManagedReference
+    @JsonManagedReference("getCorporationName")
     public String getCorporationName() {
         if (this.corporation != null) {
             return this.corporation.getName();
@@ -79,7 +79,7 @@ public class Employment {
         }
     }
 
-    @JsonManagedReference
+    @JsonManagedReference("getContactPersonID")
     public long getContactPersonID() {
         return this.contactPerson.getId();
     }

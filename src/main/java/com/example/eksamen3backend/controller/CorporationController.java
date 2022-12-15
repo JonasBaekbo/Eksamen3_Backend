@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -55,16 +53,16 @@ public class CorporationController {
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/findCorporationByName")
+/*    @GetMapping("/findCorporationByName")
     public ResponseEntity<Corporation> findCorporationByName(@RequestParam String name) {
         List<Corporation> corporationList = corporationService.findByName(name);
         Corporation corporation = corporationList.get(0);
 
         return new ResponseEntity<>(corporation, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/findCorporationById")
-    public ResponseEntity<Corporation> findContactPersonById(@RequestParam long corpID) {
+    public ResponseEntity<Corporation> findCorporationById(@RequestParam long corpID) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
         if (corporation_.isPresent()) {
             Corporation corporation = corporation_.get();

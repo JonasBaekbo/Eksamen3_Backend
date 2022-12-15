@@ -1,5 +1,6 @@
 package com.example.eksamen3backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +13,11 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@JsonIgnoreProperties(value = { "contactID", "corporationName" })
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
 
     private String subject;
     private String summary;
@@ -35,12 +36,12 @@ public class Conversation {
       super();
     }
 
-    @JsonManagedReference
+    @JsonManagedReference("currentContactPerson")
     public String currentContactPerson() {
         return contactPerson.getName();
     }
 
-    @JsonManagedReference
+    @JsonManagedReference("currentCorporation")
     public String currentCorporation() {
         return corporation.getName();
     }

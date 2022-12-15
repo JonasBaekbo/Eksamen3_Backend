@@ -58,4 +58,6 @@ public class ConversationService implements IConversation {
     public Set<Conversation> getConversationsByContactPersonOrderByDateDesc(ContactPerson contactPerson) {
         return conversationRepository.getConversationsByContactPersonOrderByDateDesc(contactPerson);
     }
+
+
 }

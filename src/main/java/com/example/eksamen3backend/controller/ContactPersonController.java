@@ -1,10 +1,7 @@
 package com.example.eksamen3backend.controller;
 
 
-import com.example.eksamen3backend.model.ContactPerson;
-import com.example.eksamen3backend.model.Corporation;
-import com.example.eksamen3backend.model.Employment;
-import com.example.eksamen3backend.model.Photo;
+import com.example.eksamen3backend.model.*;
 import com.example.eksamen3backend.service.EmploymentService;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.CorporationService;
@@ -12,6 +9,7 @@ import com.example.eksamen3backend.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,17 +35,21 @@ public class ContactPersonController {
         this.photoService = photoService;
     }
 
-    /* Json format for "/createContactPerson" :
-                                  {"corpID":1,
-                                  "name":"ole",
-                                  "addedToCorporation": "2022-12-10",
-                                  "movedFromCorporation":null,
-                                  "CPimage:""
-                                  "phonenumber": 123,
-                                  "email": "c@d.dk",
-                                  "position":"sælger"}
-                    */
-    // opretter ny contactPerson og ny employment og knytter de to sammen
+    @Operation(description = """
+            Opretter ny contactPerson og ny employment og knytter de to sammen.
+            \n
+            Example request body: \n
+            {
+              "corpID":1,\n
+              "name":"ole",\n
+              "addedToCorporation": "2022-12-10",\n
+              "movedFromCorporation":null,\n
+              "CPimage:"",\n
+              "phonenumber": 123,\n
+              "email": "c@d.dk",\n
+              "position":"sælger"\n
+            }
+            """)
     @PostMapping("/createContactPerson")
     public ResponseEntity<List<ContactPerson>> createContactPerson(@RequestBody String jsonString) throws JsonProcessingException {
         JsonNode rootNode = objectMapper.readTree(jsonString);
@@ -131,13 +133,13 @@ public class ContactPersonController {
         List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(0, name);
         return new ResponseEntity<>(contactPeople, HttpStatus.OK);
     }
-
+/*
     @GetMapping("/findContactPersonByName")
     public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
         List<ContactPerson> contactPeople = contactPersonService.findByName(name);
         ContactPerson contactPerson = contactPeople.get(0);
         return new ResponseEntity<>(contactPerson, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/findContactPersonById")
     public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {

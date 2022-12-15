@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @RestController
@@ -43,7 +42,9 @@ public class HistoryController {
             Corporation corporation = corporation_.get();
             Set<Conversation> conversations = conversationService.getConversationsByCorporationOrderByDateDesc(corporation);
             return new ResponseEntity<>(conversations, HttpStatus.OK);
-        } else {return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);}
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
@@ -51,17 +52,19 @@ public class HistoryController {
     //samtaler sorteret på kontaktperson
     @GetMapping("/conversationsByContactPerson")
     public ResponseEntity<Set<Conversation>> conversationsByContactPerson(@RequestParam long contactID) {
-        Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactID);
+        Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
         if (contactPerson_.isPresent()) {
-            ContactPerson contactPerson=contactPerson_.get();
+            ContactPerson contactPerson = contactPerson_.get();
             Set<Conversation> conversations = conversationService.getConversationsByContactPersonOrderByDateDesc(contactPerson);
             return new ResponseEntity<>(conversations, HttpStatus.OK);
-        } else {return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);}
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
     //ansættelseshistorik på en kontaktperson
-    @GetMapping("/employmentHistory")
+    @GetMapping("/employmentHistoryById")
     public ResponseEntity<Set<Employment>> employmentHistory(@RequestParam long contactID) {
         Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactID);
         if (contactPerson_.isPresent()) {
@@ -70,4 +73,6 @@ public class HistoryController {
             return new ResponseEntity<>(employments, HttpStatus.OK);
         } else {return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);}
     }
+
 }
+
