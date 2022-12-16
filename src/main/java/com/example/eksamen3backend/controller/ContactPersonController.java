@@ -147,13 +147,6 @@ public class ContactPersonController {
         return new ResponseEntity<>(contactPeople, HttpStatus.OK);
     }
 
-    /*
-        @GetMapping("/findContactPersonByName")
-        public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
-            List<ContactPerson> contactPeople = contactPersonService.findByName(name);
-            ContactPerson contactPerson = contactPeople.get(0);
-            return new ResponseEntity<>(contactPerson, HttpStatus.OK);
-        }*/
     @Operation(description = "Søger i kontaktpersoner ud fra contactID")
     @GetMapping("/findContactPersonById")
     public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {

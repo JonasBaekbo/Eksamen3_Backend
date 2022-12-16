@@ -62,13 +62,6 @@ public class CorporationController {
         return new ResponseEntity<>(showAll(), HttpStatus.OK);
     }
 
-/*    @GetMapping("/findCorporationByName")
-    public ResponseEntity<Corporation> findCorporationByName(@RequestParam String name) {
-        List<Corporation> corporationList = corporationService.findByName(name);
-        Corporation corporation = corporationList.get(0);
-
-        return new ResponseEntity<>(corporation, HttpStatus.OK);
-    }*/
 @Operation(description ="Finder en virksomhed via corpID")
     @GetMapping("/findCorporationById")
     public ResponseEntity<Corporation> findCorporationById(@RequestParam long corpID) {
