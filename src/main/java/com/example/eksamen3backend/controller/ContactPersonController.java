@@ -102,14 +102,6 @@ public class ContactPersonController {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
             JsonNode nodeName = rootNode.path("name");
             contactPersonToUpdate.setName(nodeName.asText());
-
-            Photo currentImage = contactPersonToUpdate.getCPimage();
-            JsonNode nodeImage = rootNode.path("CPimage");
-            String nodeImageAsString = nodeImage.asText();
-            //tjekker om der er ændringer i billede
-            if (!(nodeImageAsString.equals("null") || nodeImageAsString.isEmpty() || currentImage.getImageString().equals(nodeImageAsString))) {
-                photoService.createPhoto(nodeImageAsString);
-            }
             JsonNode corpIDNode = rootNode.path("corpID");
             Optional<Corporation> corporation_ = corporationService.findbyId(corpIDNode.asLong());
             //Tjekker om der skal ændres i employment
@@ -117,11 +109,19 @@ public class ContactPersonController {
                 Employment employment = objectMapper.readValue(jsonString, Employment.class);
                 Corporation corporation = corporation_.get();
 
-                Optional<Employment> currentEmployment_ = Optional.ofNullable(employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate));
+                //Optional<Employment> currentEmployment_ = Optional.ofNullable(employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate));
+                Optional<Employment> currentEmployment_ = Optional.ofNullable(contactPersonToUpdate.currentEmployments().iterator().next());
                 if (currentEmployment_.isPresent()) {
                     employmentService.editEmployment(currentEmployment_.get(), employment, corporation);
                 } else {
                     employmentService.makeEmployment(contactPersonToUpdate, corporation, employment);
+                }
+                Photo currentImage = contactPersonToUpdate.getCPimage();
+                JsonNode nodeImage = rootNode.path("CPimage");
+                String nodeImageAsString = nodeImage.asText();
+                //tjekker om der er ændringer i billede
+                if (!(nodeImageAsString.equals("null") || nodeImageAsString.isEmpty() || currentImage.getImageString().equals(nodeImageAsString))) {
+                    photoService.createPhoto(nodeImageAsString);
                 }
                 contactPersonService.save(contactPersonToUpdate);
 
