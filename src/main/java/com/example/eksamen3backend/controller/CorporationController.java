@@ -32,8 +32,7 @@ public class CorporationController {
                     "address":"Gadevej 199",\n
                     "city":"København",\n
                     "country":"Danmark",\n
-                    "logo":""\n
-            }""")
+                    "logo":""}""")
     @PostMapping("/createCorporation")
     public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String jsonString) throws JsonProcessingException {
 
@@ -101,8 +100,7 @@ public class CorporationController {
                     "address":"Gadevej 199",\n
                     "city":"København",\n
                     "country":"Danmark",\n
-                    "logo":""\n
-            }""")
+                    "logo":""}""")
     @PutMapping("/updateCorporation")
     public ResponseEntity<Map> updateCorporation(@RequestBody String jsonString, @RequestParam long corpID) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
@@ -125,6 +123,7 @@ public class CorporationController {
                     currentLogo = photoService.createPhoto(nodeLogoAsString);
 
                 }
+                newCorporationInfo.setEmployments(corporationToUpdate.getEmployments());
                 newCorporationInfo.setLogo(currentLogo);
                 newCorporationInfo.setId(corporationToUpdate.getId());
                 newCorporationInfo.setIsActive(corporationToUpdate.getIsActive());

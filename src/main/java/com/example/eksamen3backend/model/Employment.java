@@ -79,6 +79,11 @@ public class Employment {
         }
     }
 
+    @JsonManagedReference("getCorporationId")
+    public long getCorporationId(){
+        return this.corporation.getId();
+    }
+
     @JsonManagedReference("getContactPersonID")
     public long getContactPersonID() {
         return this.contactPerson.getId();

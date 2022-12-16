@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "corporation")
-@JsonIgnoreProperties(value = { "logo"})
+@JsonIgnoreProperties(value = { "logo", "corpID" })
 public class Corporation {
 
     @Id
