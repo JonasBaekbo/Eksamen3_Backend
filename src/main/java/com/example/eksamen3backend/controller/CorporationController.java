@@ -118,13 +118,17 @@ public class CorporationController {
                 JsonNode nodeLogo = rootNode.path("logo");
                 String nodeLogoAsString = nodeLogo.asText();
                 Photo currentLogo = corporationToUpdate.getLogo();
-                //Ændre logo hvis der er uploadet et nyt
-                if (!(nodeLogoAsString.equals("null") || nodeLogoAsString.isEmpty() || currentLogo.getImageString().equals(nodeLogoAsString))) {
-                    currentLogo = photoService.createPhoto(nodeLogoAsString);
+                // Sætter logoet til at være det samme, hvis der ikke er uploadet et nyt
+                if (nodeLogoAsString.equals("data:") || currentLogo.getImageString().equals(nodeLogoAsString)) {
+                    //currentLogo = photoService.createPhoto(nodeLogoAsString);
+                    newCorporationInfo.setLogo(currentLogo);
 
+                //Ændre logo hvis der er uploadet et nyt
+                }else if (!(nodeLogoAsString.equals("data:") || currentLogo.getImageString().equals(nodeLogoAsString))){
+                    Photo newLogo = photoService.createPhoto(nodeLogoAsString);
+                newCorporationInfo.setLogo(newLogo);
                 }
                 newCorporationInfo.setEmployments(corporationToUpdate.getEmployments());
-                newCorporationInfo.setLogo(currentLogo);
                 newCorporationInfo.setId(corporationToUpdate.getId());
                 newCorporationInfo.setIsActive(corporationToUpdate.getIsActive());
 
