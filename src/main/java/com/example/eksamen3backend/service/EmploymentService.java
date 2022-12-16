@@ -54,11 +54,6 @@ public class EmploymentService implements IEmployment {
 
 
     @Override
-    public List<Employment> findByCorporationAndMovedFromCorporationIsNull(Corporation corporation) {
-        return employmentRepository.findByCorporationAndMovedFromCorporationIsNull(corporation);
-    }
-
-    @Override
     public Set<Employment> findEmploymentsByContactPersonOrderByAddedToCorporationDesc(ContactPerson contactPerson) {
         return employmentRepository.findEmploymentsByContactPersonOrderByAddedToCorporationDesc(contactPerson);
     }

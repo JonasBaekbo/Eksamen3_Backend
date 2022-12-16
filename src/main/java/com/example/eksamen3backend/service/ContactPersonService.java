@@ -38,7 +38,6 @@ public class ContactPersonService implements IContactPerson {
     @Override
     public void deleteByID(Long id) {
         contactPersonRepository.deleteById(id);
-
     }
 
     @Override
@@ -46,10 +45,7 @@ public class ContactPersonService implements IContactPerson {
         return contactPersonRepository.findById(id);
     }
 
-    @Override
-    public List<ContactPerson> findByName(String name) {
-        return contactPersonRepository.findByName(name);
-    }
+
     @Override
     public List<ContactPerson> findByIsActive(int isActive){
         return contactPersonRepository.findByIsActive(isActive);
@@ -60,10 +56,6 @@ public class ContactPersonService implements IContactPerson {
         return contactPersonRepository.findByIsActiveOrderByNameAsc(isActive);
     }
 
-    @Override
-    public List<ContactPerson> findAllByNameContaining(String name) {
-        return contactPersonRepository.findAllByNameContaining(name);
-    }
 
     @Override
     public List<ContactPerson> findByIsActiveAndNameContainingOrderByNameAsc(int isActive,String name) {

@@ -10,6 +10,7 @@ import com.example.eksamen3backend.service.ConversationService;
 import com.example.eksamen3backend.service.CorporationService;
 import com.example.eksamen3backend.service.EmploymentService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +22,10 @@ import java.util.*;
 
 @RestController
 public class HistoryController {
-    private ContactPersonService contactPersonService;
-    private CorporationService corporationService;
-    private EmploymentService employmentService;
-    private ConversationService conversationService;
+    private final ContactPersonService contactPersonService;
+    private final CorporationService corporationService;
+    private final EmploymentService employmentService;
+    private final ConversationService conversationService;
 
     public HistoryController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService, ConversationService conversationService) {
         this.contactPersonService = contactPersonService;
@@ -33,8 +34,8 @@ public class HistoryController {
         this.conversationService = conversationService;
     }
 
-    //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette kan sorteres fra i visning af webside, eller i koden på et senere tidspunkt
-    //samtaler sorteret på virksomhed
+   //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette sorteres fra i visning af webside
+   @Operation(description ="Finder alle samtaler der er lavet med en virksomhed ud fra corpID")
     @GetMapping("/conversationsByCorporation")
     public ResponseEntity<Set<Conversation>> conversationsByCorporation(@RequestParam long corpID) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
@@ -45,11 +46,10 @@ public class HistoryController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-
     }
 
-    //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette kan sorteres fra i visning af webside, eller i koden på et senere tidspunkt
-    //samtaler sorteret på kontaktperson
+    //Der kommer både oplysninger om firma og nuværende kontaktpersoner med, dette sorteres fra i visning af webside
+    @Operation(description ="Finder alle samtaler der er lavet med en kontaktperson ud fra contactID")
     @GetMapping("/conversationsByContactPerson")
     public ResponseEntity<Set<Conversation>> conversationsByContactPerson(@RequestParam long contactID) {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
@@ -60,10 +60,9 @@ public class HistoryController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-
     }
 
-    //ansættelseshistorik på en kontaktperson
+    @Operation(description ="Finder alle ansættelser for en kontaktperson ud fra contactID")
     @GetMapping("/employmentHistoryById")
     public ResponseEntity<Set<Employment>> employmentHistory(@RequestParam long contactID) {
         Optional<ContactPerson> contactPerson_=contactPersonService.findbyId(contactID);

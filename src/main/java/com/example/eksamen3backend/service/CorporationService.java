@@ -14,7 +14,7 @@ public class CorporationService implements ICorporation {
 
     CorporationRepository corporationRepository;
 
-    CorporationService(CorporationRepository corporationRepository){
+    CorporationService(CorporationRepository corporationRepository) {
         this.corporationRepository = corporationRepository;
     }
 
@@ -49,8 +49,9 @@ public class CorporationService implements ICorporation {
     public List<Corporation> findByName(String name) {
         return corporationRepository.findByName(name);
     }
+
     @Override
-    public List<Corporation> findByIsActive(Integer isActive){
+    public List<Corporation> findByIsActive(Integer isActive) {
         return corporationRepository.findByIsActive(isActive);
     }
 
@@ -60,14 +61,8 @@ public class CorporationService implements ICorporation {
     }
 
     @Override
-    public List<Corporation> findAllByNameContaining(String name) {
-        return  corporationRepository.findAllByNameContaining(name);
-    }
-
-    @Override
     public List<Corporation> findByIsActiveAndNameContainingOrderByNameAsc(int isActive, String name) {
-        return corporationRepository.findByIsActiveAndNameContainingOrderByNameAsc(isActive,name);
+        return corporationRepository.findByIsActiveAndNameContainingOrderByNameAsc(isActive, name);
     }
-
 
 }

@@ -9,7 +9,8 @@ import java.util.Set;
 
 public interface IConversation extends CrudService<Conversation, Long> {
     Set<Conversation> getConversationsByCorporationOrderByDateDesc(Corporation corporation);
-    Set<Conversation>getConversationsByContactPersonOrderByDateDesc(ContactPerson contactPerson);
+
+    Set<Conversation> getConversationsByContactPersonOrderByDateDesc(ContactPerson contactPerson);
 
 
 }

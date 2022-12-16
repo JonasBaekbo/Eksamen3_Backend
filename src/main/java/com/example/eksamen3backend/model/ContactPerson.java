@@ -1,7 +1,6 @@
 package com.example.eksamen3backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -56,11 +55,11 @@ public class ContactPerson {
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "contact_person_id", referencedColumnName = "id")
     @OrderBy("movedFromCorporation DESC")
-    private Set<Employment> employmentHistory1 = new HashSet<>();
+    private Set<Employment> employmentHistoryForContactPerson = new HashSet<>();
 
     @JsonManagedReference
     public Set<Employment> employmentHistory() {
-        return employmentHistory1;
+        return employmentHistoryForContactPerson;
     }
 
 }

@@ -29,7 +29,6 @@ public class Corporation {
     @Column(name = "corporation_address")
     private String address;
 
-    //@Column(name = "corporation_logo")
     @OneToOne
     private Photo logo;
 

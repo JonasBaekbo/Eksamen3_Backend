@@ -7,6 +7,7 @@ import com.example.eksamen3backend.service.PhotoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,23 @@ import java.util.*;
 @RestController
 public class CorporationController {
 
-    private CorporationService corporationService;
-    private PhotoService photoService;
-    private ObjectMapper objectMapper=new ObjectMapper();
+    private final CorporationService corporationService;
+    private final PhotoService photoService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public CorporationController(CorporationService corporationService, PhotoService photoService) {
         this.corporationService = corporationService;
         this.photoService = photoService;
     }
-
+    @Operation(description = """
+                     Opdatering af virksomhed\n
+                     Example requestBody: \n
+                   {"name":"Firma navn",\n
+                    "address":"Gadevej 199",\n
+                    "city":"København",\n
+                    "country":"Danmark",\n
+                    "logo":""\n
+            }""")
     @PostMapping("/createCorporation")
     public ResponseEntity<List<Corporation>> createCorporation(@RequestBody String jsonString) throws JsonProcessingException {
 
@@ -36,7 +45,7 @@ public class CorporationController {
         if (corporationService.findByName(corporationName).isEmpty()) {
             Corporation corporation = objectMapper.readValue(jsonString, Corporation.class);
             JsonNode logoNode = rootNode.path("logo");
-            Photo logo=photoService.createPhoto(logoNode.asText());
+            Photo logo = photoService.createPhoto(logoNode.asText());
             corporation.setIsActive(1);
             corporation.setLogo(logo);
             corporationService.save(corporation);
@@ -60,7 +69,7 @@ public class CorporationController {
 
         return new ResponseEntity<>(corporation, HttpStatus.OK);
     }*/
-
+@Operation(description ="Finder en virksomhed via corpID")
     @GetMapping("/findCorporationById")
     public ResponseEntity<Corporation> findCorporationById(@RequestParam long corpID) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
@@ -71,27 +80,36 @@ public class CorporationController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-
+    @Operation(description ="Finder alle virksomheder med status 1=aktiv")
     @GetMapping("/showCorporations")
     public List<Corporation> showAll() {
         return corporationService.findByIsActiveOrderByNameAsc(1);
     }
 
-
+    @Operation(description ="Finder alle virksomheder med navn der matcher søgning og med status 1=aktiv")
     @GetMapping("/findActiveCorporationContaining")
     public ResponseEntity<List<Corporation>> findActiveCorporationContaining(@RequestParam String name) {
-        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(1,name);
+        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(1, name);
 
         return new ResponseEntity<>(corporations, HttpStatus.OK);
     }
+    @Operation(description ="Finder alle virksomheder med navn der matcher søgning og med status o=inaktiv")
     @GetMapping("/findInactiveCorporationContaining")
     public ResponseEntity<List<Corporation>> findInactiveCorporationContaining(@RequestParam String name) {
-        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(0,name);
+        List<Corporation> corporations = corporationService.findByIsActiveAndNameContainingOrderByNameAsc(0, name);
 
         return new ResponseEntity<>(corporations, HttpStatus.OK);
     }
 
-
+    @Operation(description = """
+                    Opdatering af virksomhedsoplysninger\n
+                    Example requestBody: \n
+                   {"name":"Firma navn",\n
+                    "address":"Gadevej 199",\n
+                    "city":"København",\n
+                    "country":"Danmark",\n
+                    "logo":""\n
+            }""")
     @PutMapping("/updateCorporation")
     public ResponseEntity<Map> updateCorporation(@RequestBody String jsonString, @RequestParam long corpID) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
@@ -111,7 +129,7 @@ public class CorporationController {
                 Photo currentLogo = corporationToUpdate.getLogo();
                 //Ændre logo hvis der er uploadet et nyt
                 if (!(nodeLogoAsString.equals("null") || nodeLogoAsString.isEmpty() || currentLogo.getImageString().equals(nodeLogoAsString))) {
-                    currentLogo=photoService.createPhoto(nodeLogoAsString);
+                    currentLogo = photoService.createPhoto(nodeLogoAsString);
 
                 }
                 newCorporationInfo.setLogo(currentLogo);
@@ -125,11 +143,11 @@ public class CorporationController {
                 return ResponseEntity.ok(map);
             }
         }
-        map.put("message", "corporation updatet, if found ");
+        map.put("message", "Virksomhed opdateret ");
         return ResponseEntity.ok(map);
     }
 
-    //ændre status på virksomhed fra 1=aktiv til 0=inaktiv
+    @Operation(description = "Ændre status på virksomhed fra 1=aktiv til 0=inaktiv")
     @PutMapping("/archiveCorporation")
     public ResponseEntity<Map> archiveCorporation(@RequestParam long corpID) {
 
@@ -145,7 +163,7 @@ public class CorporationController {
         map.put("message", "Corporation archived");
         return ResponseEntity.ok(map);
     }
-
+    @Operation(description = "Finder alle virksomheder med status 0=inaktiv")
     @GetMapping("/getArchivedCorporations")
     public List<Corporation> getArchivedCorporations() {
         return corporationService.findByIsActiveOrderByNameAsc(0);

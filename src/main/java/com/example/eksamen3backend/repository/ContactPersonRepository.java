@@ -13,6 +13,6 @@ public interface ContactPersonRepository extends JpaRepository<ContactPerson, Lo
     List<ContactPerson> findByIsActiveOrderByNameAsc(int isActive);
 
     List<ContactPerson> findAllByNameContaining(String name);
-    List<ContactPerson> findAllByNameContainingOrderByNameAsc(String name);
+
     List<ContactPerson> findByIsActiveAndNameContainingOrderByNameAsc(int isActive,String name);
 }

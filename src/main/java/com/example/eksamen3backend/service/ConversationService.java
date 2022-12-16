@@ -16,7 +16,7 @@ public class ConversationService implements IConversation {
 
     ConversationRepository conversationRepository;
 
-    ConversationService(ConversationRepository conversationRepository){
+    ConversationService(ConversationRepository conversationRepository) {
         this.conversationRepository = conversationRepository;
     }
 
@@ -35,13 +35,11 @@ public class ConversationService implements IConversation {
     @Override
     public void delete(Conversation conversation) {
         conversationRepository.delete(conversation);
-
     }
 
     @Override
     public void deleteByID(Long id) {
         conversationRepository.deleteById(id);
-
     }
 
     @Override

@@ -22,11 +22,11 @@ import java.util.List;
 @RestController
 public class ContactPersonController {
 
-    private ContactPersonService contactPersonService;
-    private CorporationService corporationService;
-    private EmploymentService employmentService;
-    private PhotoService photoService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ContactPersonService contactPersonService;
+    private final CorporationService corporationService;
+    private final EmploymentService employmentService;
+    private final PhotoService photoService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ContactPersonController(ContactPersonService contactPersonService, CorporationService corporationService, EmploymentService employmentService, PhotoService photoService) {
         this.contactPersonService = contactPersonService;
@@ -38,16 +38,15 @@ public class ContactPersonController {
     @Operation(description = """
             Opretter ny contactPerson og ny employment og knytter de to sammen.
             \n
-            Example request body: \n
-            {
-              "corpID":1,\n
+            Example requestBody: \n
+            {"corpID":1,\n
               "name":"ole",\n
               "addedToCorporation": "2022-12-10",\n
-              "movedFromCorporation":null,\n
+              "movedFromCorporation":"null",\n
               "CPimage:"",\n
-              "phonenumber": 123,\n
-              "email": "c@d.dk",\n
-              "position":"sælger"\n
+              "phonenumber": 12345678,\n
+              "email": "ab@cd.dk",\n
+              "position":"marketing"\n
             }
             """)
     @PostMapping("/createContactPerson")
@@ -66,21 +65,33 @@ public class ContactPersonController {
         if ((corporation_.isPresent())) {
             Employment employment = objectMapper.readValue(jsonString, Employment.class);
             employmentService.makeEmployment(contactPerson, corporation_.get(), employment);
-            System.out.println("Kontaktperson oprettet: " + contactPerson.getName());
+            System.out.println("Kontaktperson " + contactPerson.getName() + "oprettet");
         } else {
             System.out.println("Fejl i oprettelsen af " + contactPerson.getName());
         }
         return new ResponseEntity<>(getAll(), HttpStatus.OK);
     }
 
-
+    @Operation(description = "Finder alle kontaktpersoner med status 1=aktiv")
     @GetMapping("/getAllContactPersons")
     public List<ContactPerson> getAll() {
         return contactPersonService.findByIsActiveOrderByNameAsc(1);
     }
 
-
-    //kan opdatere alle data på en kontaktperson, samt oprette ny employment, hvis corpID ændre sig
+    @Operation(description = """
+            Opdatering af alle data på en kontaktperson og deres nuværende employment. Der oprettes en ny employment, hvis corpID ændre sig
+            \n
+            Example requestBody: \n
+            {"corpID":1,\n
+              "name":"ole",\n
+              "addedToCorporation": "2022-12-10",\n
+              "movedFromCorporation":"null",\n
+              "CPimage:"",\n
+              "phonenumber": 12345678,\n
+              "email": "ab@cd.dk",\n
+              "position":"marketing"\n
+            }
+            """)
     @PutMapping("/updateContactperson")
     public ResponseEntity<Map> updateContactperson(@RequestBody String jsonString, @RequestParam long contactID) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
@@ -116,31 +127,34 @@ public class ContactPersonController {
 
                 map.put("message", "Opdaterede kontaktperson:" + contactPersonToUpdate.getName());
             } else {
-                map.put("message", "Kunne ikke oprette forbindelse mellem virksomhed og medarbejder");
+                map.put("message", "Kunne ikke opdatere kontaktperson: " + contactPersonToUpdate.getName());
             }
         }
         return ResponseEntity.ok(map);
     }
 
+    @Operation(description = "Søger i kontaktpersoner der har navne der matcher søgning og har status 1=aktiv")
     @GetMapping("/findActiveContactPersonContaining")
     public ResponseEntity<List<ContactPerson>> findActiveContactPersonContaining(@RequestParam String name) {
         List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(1, name);
         return new ResponseEntity<>(contactPeople, HttpStatus.OK);
     }
 
+    @Operation(description = "Søger i kontaktpersoner der har navne der matcher søgning og har status 0=inaktiv")
     @GetMapping("/findInactiveContactPersonContaining")
     public ResponseEntity<List<ContactPerson>> findInactiveContactPersonContaining(@RequestParam String name) {
         List<ContactPerson> contactPeople = contactPersonService.findByIsActiveAndNameContainingOrderByNameAsc(0, name);
         return new ResponseEntity<>(contactPeople, HttpStatus.OK);
     }
-/*
-    @GetMapping("/findContactPersonByName")
-    public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
-        List<ContactPerson> contactPeople = contactPersonService.findByName(name);
-        ContactPerson contactPerson = contactPeople.get(0);
-        return new ResponseEntity<>(contactPerson, HttpStatus.OK);
-    }*/
 
+    /*
+        @GetMapping("/findContactPersonByName")
+        public ResponseEntity<ContactPerson> findContactPersonByName(@RequestParam String name) {
+            List<ContactPerson> contactPeople = contactPersonService.findByName(name);
+            ContactPerson contactPerson = contactPeople.get(0);
+            return new ResponseEntity<>(contactPerson, HttpStatus.OK);
+        }*/
+    @Operation(description = "Søger i kontaktpersoner ud fra contactID")
     @GetMapping("/findContactPersonById")
     public ResponseEntity<ContactPerson> findContactPersonById(@RequestParam long contactID) {
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
@@ -151,11 +165,12 @@ public class ContactPersonController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
+    @Operation(description = "Ændre status på kontaktperson fra 1=aktiv til 0=inaktiv")
     @PutMapping("/archiveContact")
     public ResponseEntity<Map> archiveContact(@RequestParam long contactID) {
 
         Optional<ContactPerson> contactPerson_ = contactPersonService.findbyId(contactID);
-
+        Map<String, String> map = new HashMap<>();
         if (contactPerson_.isPresent()) {
             ContactPerson contactPersonToUpdate = contactPerson_.get();
             Employment employment_ = employmentService.findByContactPersonAndMovedFromCorporationIsNull(contactPersonToUpdate);
@@ -167,12 +182,15 @@ public class ContactPersonController {
             contactPersonService.save(contactPersonToUpdate);
             employmentService.save(employment_);
 
+            map.put("message", "Kontaktperson er arkiveret");
+            return ResponseEntity.ok(map);
+        } else {
+            map.put("message", "Kontaktperson kunne ikke arkiveret");
+            return ResponseEntity.ok(map);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "Contactperson archived, if found ");
-        return ResponseEntity.ok(map);
     }
 
+    @Operation(description = "Finder alle kontaktpersoner med status 0=inaktiv")
     @GetMapping("/getArchivedContactPersons")
     public List<ContactPerson> getArchivedContactPersons() {
         return contactPersonService.findByIsActiveOrderByNameAsc(0);

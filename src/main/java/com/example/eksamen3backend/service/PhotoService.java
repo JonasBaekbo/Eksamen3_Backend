@@ -48,7 +48,7 @@ public class PhotoService implements IPhoto {
         return photoRepository.findById(aLong);
     }
 
-    public Photo createPhoto(String imageAsString){
+    public Photo createPhoto(String imageAsString) {
         Photo photo = new Photo();
         photo.setImageString(imageAsString);
         photo.setCreated(Timestamp.valueOf(LocalDateTime.now()));

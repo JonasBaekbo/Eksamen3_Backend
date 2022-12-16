@@ -6,9 +6,7 @@ import com.example.eksamen3backend.model.Corporation;
 import com.example.eksamen3backend.service.ContactPersonService;
 import com.example.eksamen3backend.service.ConversationService;
 import com.example.eksamen3backend.service.CorporationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +15,9 @@ import java.util.*;
 
 @RestController
 public class ConversationController {
-    private ConversationService conversationService;
-    private CorporationService corporationService;
-    private ContactPersonService contactPersonService;
+    private final ConversationService conversationService;
+    private final CorporationService corporationService;
+    private final ContactPersonService contactPersonService;
 
     public ConversationController(
             ConversationService conversationService,
@@ -31,7 +29,7 @@ public class ConversationController {
         this.contactPersonService = contactPersonService;
     }
 
-
+    @Operation(description = "Opretter en samtale mellem en kontaktperson og en virksomhed")
     @PostMapping("/createConversation")
     public ResponseEntity<Set<Conversation>> createConversation(@RequestBody Conversation conversation, @RequestParam Long contactID, @RequestParam Long corpID) {
         Optional<Corporation> corporation_ = corporationService.findbyId(corpID);
@@ -49,11 +47,13 @@ public class ConversationController {
         }
     }
 
+    @Operation(description = "Finder alle samtaler")
     @GetMapping("/getAllConversations")
     public Set<Conversation> getAll() {
         return conversationService.findall();
     }
 
+    @Operation(description = "Finder en samtale via convoID")
     @GetMapping("/findConversationById")
     public ResponseEntity<Conversation> findConversationById(@RequestParam long convoID) {
         Optional<Conversation> conversation_ = conversationService.findbyId(convoID);
